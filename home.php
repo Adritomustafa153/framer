@@ -1,9 +1,14 @@
 <?php
-// index.php
+// home.php
 require_once 'config/database.php';
 require_once 'models/Package.php';
 require_once 'models/Blog.php';
 require_once 'models/Settings.php';
+require_once 'models/Slider.php';
+require_once 'models/Gallery.php';
+require_once 'models/GallerySettings.php';
+require_once 'models/WhyUs.php';
+require_once 'models/FAQ.php';
 
 // Initialize database connection
 $database = new Database();
@@ -11,11 +16,44 @@ $db = $database->getConnection();
 
 // Get packages from database
 $package = new Package($db);
-$packages = $package->getAll('is_featured DESC, sort_order ASC, created_at DESC');
+$packages = $package->getAll('is_featured DESC, sort_order ASC, id DESC');
 
 // Get blog posts
 $blog = new Blog($db);
 $blogPosts = $blog->getPublished();
+
+// Get slider images
+$slider = new Slider($db);
+$sliderImages = $slider->getActive();
+
+// Get gallery images (limit to 8 for homepage)
+$gallery = new Gallery($db);
+$galleryImages = $gallery->getActive();
+$galleryImages = array_slice($galleryImages, 0, 8); // Show only 8 images on homepage
+$galleryCategories = $gallery->getCategories();
+
+// Get why us items
+$whyUs = new WhyUs($db);
+$whyUsItems = $whyUs->getActive();
+
+// Get FAQ items
+$faq = new FAQ($db);
+$faqItems = $faq->getActive();
+$faqCategories = $faq->getCategories();
+
+// Get gallery settings
+$gallerySettings = new GallerySettings($db);
+$galleryTitle = $gallerySettings->get('gallery_title') ?? 'Our Gallery';
+$imagesPerRow = $gallerySettings->get('images_per_row') ?? '4';
+$slideshowMusicUrl = $gallerySettings->get('slideshow_music_url') ?? '';
+$slideshowAutoplay = $gallerySettings->get('slideshow_autoplay') ?? '1';
+$slideshowDelay = $gallerySettings->get('slideshow_delay') ?? '3000';
+
+// Calculate column class based on images per row - with reduced gutters
+$colClass = 'col-lg-3 col-md-4 col-sm-6 px-1'; // Default for 4 per row with reduced padding
+if ($imagesPerRow == '3') $colClass = 'col-lg-4 col-md-6 px-1';
+if ($imagesPerRow == '5') $colClass = 'col-lg-2 col-md-3 col-sm-4 px-1';
+if ($imagesPerRow == '6') $colClass = 'col-lg-2 col-md-3 col-sm-4 px-1';
 
 // Get settings as key-value pairs
 $settings = new Settings($db);
@@ -46,6 +84,9 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
     <!-- Google Fonts for Bengali text -->
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Slick Carousel CSS for blog -->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css"/>
     <style>
         * { font-family: 'Inter', sans-serif; }
         .bengali-text, .bengali-font {
@@ -63,12 +104,38 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             z-index: 1030;
         }
+        
+        /* Logo and company name container */
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
         /* logo image */
         .logo-img {
-            height: 80px;
+            height: 60px;
             width: auto;
             display: block;
         }
+        
+        /* Company name styling */
+        .company-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 1px;
+            line-height: 1;
+        }
+        
+        .company-name-bengali {
+            font-family: 'Hind Siliguri', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #cccccc;
+            line-height: 1;
+        }
+        
         /* three‑dash menu button (hamburger) */
         .dash-menu {
             background: transparent;
@@ -156,27 +223,166 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
             margin: 0.8rem auto 0;
         }
 
-        /* slider / hero area */
-        .hero-slider {
+        /* Section header with view all button */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .section-header .section-title {
+            margin-bottom: 0;
+            width: auto;
+        }
+        
+        .section-header .section-title::after {
+            margin: 0.8rem 0 0;
+        }
+        
+        .view-all-btn {
+            background: transparent;
+            border: 2px solid #111;
+            color: #111;
+            padding: 10px 25px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .view-all-btn:hover {
+            background: #111;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
+        }
+        
+        .view-all-btn i {
+            font-size: 1.2rem;
+        }
+
+        /* Slider Styles */
+        .slider-section {
+            position: relative;
             width: 100%;
             background: #000;
+            margin-top: 0;
+            padding-top: 0;
         }
         .carousel-item {
-            height: 85vh;
-            min-height: 500px;
-            background-color: #111;
+            height: 500px;
+            background-color: #000;
         }
         .carousel-item img {
-            object-fit: cover;
             height: 100%;
-            width: 100%;
+            object-fit: cover;
+        }
+        .carousel-caption {
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .carousel-caption h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .carousel-caption p {
+            font-size: 1.1rem;
+            margin-bottom: 0;
             opacity: 0.9;
+        }
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 50px;
+            height: 50px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin: 0 20px;
+        }
+
+        .carousel-control-prev:hover,
+        .carousel-control-next:hover {
+            background: rgba(0,0,0,0.8);
+        }
+        .carousel-indicators {
+            margin-bottom: 20px;
+        }
+
+        .carousel-indicators button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin: 0 5px;
         }
         
         p, li, .badge-bw, .btn {
             font-size: 0.95rem;
         }
         h2, h3, h4 { font-weight: 600; }
+
+        /* Why Us Card Styles */
+        .why-us-card {
+            background: white;
+            border: 2px solid #111;
+            padding: 2.5rem 2rem;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .why-us-card:hover {
+            transform: translate(-5px, -5px);
+            box-shadow: 12px 12px 0 rgba(0,0,0,0.15);
+        }
+        
+        .why-us-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #111, #555, #111);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+        
+        .why-us-card:hover::before {
+            transform: translateX(0);
+        }
+        
+        .why-us-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+        
+        .why-us-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .why-us-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
 
         /* Contact Section Styles */
         .contact-info-card {
@@ -251,7 +457,7 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
             display: block;
         }
 
-        /* Package Card Styles */
+        /* Package Card Styles - White Background */
         .package-card {
             background: white;
             border: 2px solid #111;
@@ -270,25 +476,9 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
         }
         
         .package-card.featured {
-            background: #111;
-            color: white;
-            border-color: #fff;
-            box-shadow: 10px 10px 0 rgba(0,0,0,0.3);
-        }
-        
-        .package-card.featured .package-price,
-        .package-card.featured .package-duration {
-            color: #ddd;
-        }
-        
-        .package-card.featured .btn-outline-dark {
-            border-color: white;
-            color: white;
-        }
-        
-        .package-card.featured .btn-outline-dark:hover {
+            border: 3px solid #000;
             background: white;
-            color: black;
+            box-shadow: 10px 10px 0 rgba(0,0,0,0.2);
         }
         
         .featured-badge {
@@ -309,20 +499,11 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
             margin-bottom: 0.5rem;
         }
         
-        .package-code {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 1rem;
-        }
-        
-        .package-card.featured .package-code {
-            color: #aaa;
-        }
-        
         .package-price {
             font-size: 2rem;
             font-weight: 800;
             margin-bottom: 0.2rem;
+            color: #000;
         }
         
         .package-duration {
@@ -345,7 +526,6 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
         
         .package-features li {
             padding: 0.5rem 0;
-            border-bottom: 1px dashed #eee;
             display: flex;
             align-items: center;
         }
@@ -357,27 +537,337 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
             font-weight: 700;
         }
         
-        .package-card.featured .package-features li:before {
-            color: gold;
-        }
-        
-        .package-features li:last-child {
-            border-bottom: none;
-        }
-        
         .btn-package {
             border: 2px solid #111;
-            background: transparent;
+            background: #111;
+            color: white;
             padding: 12px;
             font-weight: 700;
             transition: all 0.3s;
             width: 100%;
             cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .btn-package:hover {
+            background: white;
+            color: #111;
+        }
+
+        /* Gallery Styles - Beautiful Design - NO BORDERS */
+        .gallery-container {
+            margin-top: 20px;
+            margin-left: -4px;
+            margin-right: -4px;
+        }
+        
+        .gallery-item {
+            padding: 4px !important;
+        }
+        
+        .gallery-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            background: white;
+            aspect-ratio: 1 / 1;
+            border: none; /* Remove any border */
+            outline: none; /* Remove any outline */
+        }
+        
+        .gallery-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        
+        .gallery-image-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+        
+        .gallery-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+            display: block; /* Removes extra space below image */
+        }
+        
+        .gallery-card:hover .gallery-image {
+            transform: scale(1.1);
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border: none;
+        }
+        
+        .gallery-card:hover .gallery-overlay {
+            opacity: 1;
+        }
+        
+        .gallery-overlay i {
+            color: white;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-card:hover .gallery-overlay i {
+            transform: scale(1);
+        }
+        
+        /* Category filter buttons */
+        .gallery-filter {
+            margin: 0 3px 8px;
+            border-color: #111;
+            color: #111;
+            border-radius: 30px;
+            padding: 5px 18px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .gallery-filter.active {
             background: #111;
             color: white;
+            border-color: #111;
+        }
+        
+        .gallery-filter:hover {
+            background: #333;
+            color: white;
+            border-color: #333;
+            transform: translateY(-2px);
+        }
+        
+        /* FAQ Styles */
+        .faq-section {
+            background: #f9f9f9;
+        }
+        
+        .faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            background: white;
+            box-shadow: 5px 5px 0 rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .faq-item:hover {
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.1);
+            transform: translate(-2px, -2px);
+        }
+        
+        .faq-question {
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            transition: background 0.3s ease;
+        }
+        
+        .faq-question:hover {
+            background: #f5f5f5;
+        }
+        
+        .faq-question h4 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #111;
+            flex: 1;
+        }
+        
+        .faq-icon {
+            font-size: 1.5rem;
+            color: #111;
+            transition: transform 0.3s ease;
+            margin-left: 20px;
+        }
+        
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.3s ease;
+            background: #fafafa;
+            border-top: 1px solid transparent;
+        }
+        
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            border-top-color: #ddd;
+            padding: 20px 25px;
+        }
+        
+        .faq-answer p {
+            margin: 0;
+            line-height: 1.7;
+            color: #555;
+        }
+        
+        .faq-category {
+            display: inline-block;
+            background: #111;
+            color: white;
+            padding: 3px 10px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        /* Lightbox Customization */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(5px);
+        }
+        
+        .lightbox.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10000;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+        
+        .lightbox-close:hover {
+            color: #ccc;
+            transform: scale(1.1);
+        }
+        
+        .lightbox-prev, .lightbox-next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 20px;
+            z-index: 10000;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            transition: all 0.3s;
+        }
+        
+        .lightbox-prev {
+            left: 30px;
+        }
+        
+        .lightbox-next {
+            right: 30px;
+        }
+        
+        .lightbox-prev:hover, .lightbox-next:hover {
+            transform: translateY(-50%) scale(1.2);
+            color: #ddd;
+        }
+        
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 80%;
+            text-align: center;
+        }
+        
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 70vh;
+            border: 3px solid white;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            border-radius: 8px;
+        }
+        
+        .lightbox-caption {
+            color: white;
+            padding: 20px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .lightbox-caption h4 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .lightbox-caption p {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+        
+        .lightbox-controls {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10000;
+        }
+        
+        .lightbox-controls button {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid white;
+            color: white;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+            border-radius: 30px;
+        }
+        
+        .lightbox-controls button:hover {
+            background: white;
+            color: black;
+            transform: translateY(-2px);
         }
 
         /* Blog Card Styles */
@@ -390,6 +880,7 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
             height: 100%;
             display: flex;
             flex-direction: column;
+            margin: 10px 0;
         }
         
         .blog-card:hover {
@@ -442,6 +933,18 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
             line-height: 1.7;
         }
         
+        /* Blog Carousel */
+        .blog-carousel-container {
+            position: relative;
+            padding: 0 30px;
+        }
+        .blog-carousel {
+            margin: 0 -10px;
+        }
+        .blog-carousel .slick-slide {
+            padding: 0 10px;
+        }
+        
         /* Social Media Icons */
         .social-icon-link {
             display: inline-flex;
@@ -456,6 +959,7 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
             transition: all 0.3s ease;
             text-decoration: none;
             margin: 0 0.5rem;
+            border-radius: 50%;
         }
         
         .social-icon-link:hover {
@@ -578,6 +1082,7 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
             font-size: 1.5rem;
             transition: all 0.3s ease;
             text-decoration: none;
+            border-radius: 50%;
         }
         
         .footer-social-link:hover {
@@ -729,19 +1234,73 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
             margin-right: 2px;
         }
         
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .carousel-item {
+                height: 400px;
+            }
+            
+            .carousel-caption h3 {
+                font-size: 1.8rem;
+            }
+            
+            .company-name {
+                font-size: 1.5rem;
+            }
+            
+            .company-name-bengali {
+                font-size: 1.2rem;
+            }
+        }
+
         @media (max-width: 768px) {
             .navbar-frame { padding: 0.3rem 1rem; }
-            .logo-img { height: 36px; }
-            .dash-menu i { font-size: 1.8rem; }
-            .carousel-item { height: 60vh; }
+            .logo-img { height: 45px; }
+            
+            .company-name {
+                font-size: 1.3rem;
+            }
+            
+            .company-name-bengali {
+                font-size: 1rem;
+            }
+            
+            .carousel-item {
+                height: 350px;
+            }
+            
+            .carousel-caption {
+                padding: 30px 20px 15px;
+            }
+            
+            .carousel-caption h3 {
+                font-size: 1.5rem;
+                margin-bottom: 5px;
+            }
+            
+            .carousel-caption p {
+                font-size: 0.9rem;
+            }
+            
+            .carousel-control-prev,
+            .carousel-control-next {
+                width: 40px;
+                height: 40px;
+                margin: 0 10px;
+            }
+            
+            .carousel-indicators {
+                margin-bottom: 10px;
+            }
+            
             .section-title { font-size: 1.8rem; }
             .offcanvas-body .nav-link { font-size: 1.1rem; }
             .contact-info-card { margin-top: 2rem; }
             .map-container { min-height: 300px; }
             .social-icon-link {
-                width: 50px;
-                height: 50px;
-                font-size: 1.5rem;
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
                 margin: 0 0.25rem;
             }
             .footer-company-name { font-size: 2rem; }
@@ -758,6 +1317,76 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
                 bottom: 95px;
                 right: 20px;
                 font-size: 0.8rem;
+            }
+            .blog-carousel-container {
+                padding: 0 20px;
+            }
+            .lightbox-prev {
+                left: 10px;
+                font-size: 30px;
+            }
+            .lightbox-next {
+                right: 10px;
+                font-size: 30px;
+            }
+            .gallery-filter {
+                padding: 4px 12px;
+                font-size: 0.8rem;
+            }
+            .faq-question {
+                padding: 15px 20px;
+            }
+            .faq-question h4 {
+                font-size: 1rem;
+            }
+            .faq-item.active .faq-answer {
+                padding: 15px 20px;
+            }
+            .section-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            .section-header .section-title::after {
+                margin: 0.8rem auto 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .carousel-item {
+                height: 280px;
+            }
+            
+            .carousel-caption {
+                padding: 25px 15px 10px;
+            }
+            
+            .carousel-caption h3 {
+                font-size: 1.3rem;
+            }
+            
+            .carousel-caption p {
+                font-size: 0.8rem;
+            }
+            
+            .carousel-control-prev,
+            .carousel-control-next {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .company-name {
+                font-size: 1.1rem;
+            }
+            
+            .company-name-bengali {
+                font-size: 0.9rem;
+            }
+            
+            .gallery-filter {
+                padding: 3px 10px;
+                font-size: 0.75rem;
+                margin: 0 2px 5px;
             }
         }
     </style>
@@ -777,9 +1406,15 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand navbar-frame fixed-top">
         <div class="container-fluid px-2 px-md-3">
-            <a class="navbar-brand p-0" href="#">
-                <img src="logo.png" alt="Framer" class="logo-img">
-            </a>
+            <div class="brand-container">
+                <a class="navbar-brand p-0" href="#">
+                    <img src="logo.png" alt="Framer" class="logo-img">
+                </a>
+                <div>
+                    <div class="company-name">FRAMER</div>
+                    <div class="company-name-bengali">ফ্রেমার</div>
+                </div>
+            </div>
             <button class="dash-menu" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-label="Menu">
                 <i class="bi bi-list"></i>
             </button>
@@ -794,14 +1429,14 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
         </div>
         <div class="offcanvas-body p-0 d-flex flex-column">
             <div class="nav flex-column">
-                <a class="nav-link menu-item" data-target="about">About Framer</a>
-                <a class="nav-link menu-item" data-target="why-us">Why Us</a>
-                <a class="nav-link menu-item" data-target="gallery">Gallery</a>
-                <a class="nav-link menu-item" data-target="packages">Packages</a>
-                <a class="nav-link menu-item" data-target="contact">Contact</a>
-                <a class="nav-link menu-item" data-target="social">Social Media</a>
-                <a class="nav-link menu-item" data-target="blog">Blog</a>
-                <a class="nav-link menu-item" data-target="login">Login</a>
+                <a class="nav-link" href="#about">About Framer</a>
+                <a class="nav-link" href="#why-us">Why Us</a>
+                <a class="nav-link" href="#gallery">Gallery</a>
+                <a class="nav-link" href="#packages">Packages</a>
+                <a class="nav-link" href="#contact">Contact</a>
+                <a class="nav-link" href="#social">Social Media</a>
+                <a class="nav-link" href="#blog">Blog</a>
+                <a class="nav-link" href="#faq">FAQ</a>
             </div>
             <div class="mt-auto p-3 small text-secondary border-top border-secondary">
                 <span class="text-white-50">© framer / monochrome</span>
@@ -810,45 +1445,79 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
     </div>
 
     <!-- MAIN CONTENT -->
-    <main style="margin-top: 80px;">
+    <main style="margin-top: 0;">
 
-        <!-- HERO SLIDER (6 images) -->
-        <section id="hero-slider" class="p-0 m-0 border-0">
-            <div id="framerCarousel" class="carousel slide hero-slider" data-bs-ride="carousel" data-bs-interval="4000">
-                <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#framerCarousel" data-bs-slide-to="0" class="active"></button>
-                    <button type="button" data-bs-target="#framerCarousel" data-bs-slide-to="1"></button>
-                    <button type="button" data-bs-target="#framerCarousel" data-bs-slide-to="2"></button>
-                    <button type="button" data-bs-target="#framerCarousel" data-bs-slide-to="3"></button>
-                    <button type="button" data-bs-target="#framerCarousel" data-bs-slide-to="4"></button>
-                    <button type="button" data-bs-target="#framerCarousel" data-bs-slide-to="5"></button>
-                </div>
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img src="https://placecats.com/1600/900?random=1" class="d-block w-100" alt="slide 1">
+        <!-- BOOTSTRAP SLIDER -->
+        <section id="hero-slider" class="slider-section">
+            <div id="framerCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4000">
+                <?php if ($sliderImages && count($sliderImages) > 0): ?>
+                    <div class="carousel-indicators">
+                        <?php foreach($sliderImages as $index => $slide): ?>
+                            <button type="button" data-bs-target="#framerCarousel" data-bs-slide-to="<?php echo $index; ?>" class="<?php echo $index == 0 ? 'active' : ''; ?>" aria-current="<?php echo $index == 0 ? 'true' : ''; ?>" aria-label="Slide <?php echo $index + 1; ?>"></button>
+                        <?php endforeach; ?>
                     </div>
-                    <div class="carousel-item">
-                        <img src="https://placecats.com/1600/901?random=2" class="d-block w-100" alt="slide 2">
+                    
+                    <div class="carousel-inner">
+                        <?php foreach($sliderImages as $index => $slide): ?>
+                            <div class="carousel-item <?php echo $index == 0 ? 'active' : ''; ?>">
+                                <img src="<?php echo htmlspecialchars($slide['image_url']); ?>" class="d-block w-100" alt="<?php echo htmlspecialchars($slide['title']); ?>" style="height: 500px; object-fit: cover;">
+                                <?php if (!empty($slide['title']) || !empty($slide['description'])): ?>
+                                    <div class="carousel-caption d-none d-md-block">
+                                        <?php if (!empty($slide['title'])): ?>
+                                            <h3><?php echo htmlspecialchars($slide['title']); ?></h3>
+                                        <?php endif; ?>
+                                        <?php if (!empty($slide['description'])): ?>
+                                            <p><?php echo htmlspecialchars($slide['description']); ?></p>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
-                    <div class="carousel-item">
-                        <img src="https://placecats.com/1600/902?random=3" class="d-block w-100" alt="slide 3">
+                    
+                    <button class="carousel-control-prev" type="button" data-bs-target="#framerCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#framerCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                    
+                <?php else: ?>
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img src="https://placecats.com/1600/900?random=1" class="d-block w-100" alt="slide 1" style="height: 500px; object-fit: cover;">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h3>Welcome to Framer</h3>
+                                <p>Professional photography services</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="https://placecats.com/1600/901?random=2" class="d-block w-100" alt="slide 2" style="height: 500px; object-fit: cover;">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h3>Wedding Photography</h3>
+                                <p>Capturing your special moments</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="https://placecats.com/1600/902?random=3" class="d-block w-100" alt="slide 3" style="height: 500px; object-fit: cover;">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h3>Portrait Sessions</h3>
+                                <p>Timeless black and white portraits</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="carousel-item">
-                        <img src="https://placecats.com/1600/903?random=4" class="d-block w-100" alt="slide 4">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="https://placecats.com/1600/904?random=5" class="d-block w-100" alt="slide 5">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="https://placecats.com/1600/905?random=6" class="d-block w-100" alt="slide 6">
-                    </div>
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#framerCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon"></span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#framerCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon"></span>
-                </button>
+                    
+                    <button class="carousel-control-prev" type="button" data-bs-target="#framerCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#framerCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                <?php endif; ?>
             </div>
         </section>
 
@@ -865,43 +1534,120 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
             </div>
         </section>
 
-        <!-- WHY US -->
+        <!-- WHY US - Dynamic from Database -->
         <section id="why-us">
             <div class="container">
                 <h2 class="section-title">Why Us</h2>
-                <div class="row g-4 justify-content-center">
-                    <div class="col-md-4 col-sm-6">
-                        <div class="p-4 border border-dark bg-white text-center h-100">
-                            <h3 class="h5">⚫ Precision</h3>
-                            <p class="small">Every pixel matters. We shoot, develop and frame with obsessive attention.</p>
+                <div class="row g-4">
+                    <?php if (!empty($whyUsItems)): ?>
+                        <?php foreach ($whyUsItems as $item): ?>
+                            <div class="col-md-4 col-sm-6">
+                                <div class="why-us-card">
+                                    <?php if (!empty($item['icon'])): ?>
+                                        <div class="why-us-icon"><?php echo $item['icon']; ?></div>
+                                    <?php endif; ?>
+                                    <h3 class="why-us-title"><?php echo htmlspecialchars($item['title']); ?></h3>
+                                    <p class="why-us-description"><?php echo htmlspecialchars($item['description']); ?></p>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div class="col-12 text-center">
+                            <p class="text-muted">No items available.</p>
                         </div>
-                    </div>
-                    <div class="col-md-4 col-sm-6">
-                        <div class="p-4 border border-dark bg-white text-center h-100">
-                            <h3 class="h5">⬜ Timeless</h3>
-                            <p class="small">Black and white never goes out of style. Your images stay modern.</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4 col-sm-6">
-                        <div class="p-4 border border-dark bg-white text-center h-100">
-                            <h3 class="h5">◼️ Experience</h3>
-                            <p class="small">Over a decade working with magazines, brands, and couples.</p>
-                        </div>
-                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </section>
 
-        <!-- GALLERY -->
+        <!-- GALLERY - Beautiful Design - NO BORDERS, with View All Button -->
         <section id="gallery">
-            <div class="container">
-                <h2 class="section-title">Gallery</h2>
-                <div class="row g-3">
-                    <div class="col-6 col-md-3"><div class="bg-black d-flex align-items-center justify-content-center text-white" style="height: 160px; background:#2a2a2a;">Portrait</div></div>
-                    <div class="col-6 col-md-3"><div class="bg-black d-flex align-items-center justify-content-center text-white" style="height: 160px; background:#1e1e1e;">Street</div></div>
-                    <div class="col-6 col-md-3"><div class="bg-black d-flex align-items-center justify-content-center text-white" style="height: 160px; background:#232323;">Studio</div></div>
-                    <div class="col-6 col-md-3"><div class="bg-black d-flex align-items-center justify-content-center text-white" style="height: 160px; background:#282828;">Film</div></div>
+            <div class="container-fluid px-2">
+                <div class="section-header">
+                    <h2 class="section-title"><?php echo htmlspecialchars($galleryTitle); ?></h2>
+                    <a href="gallery.php" class="view-all-btn">
+                        View Gallery <i class="bi bi-arrow-right"></i>
+                    </a>
                 </div>
+                
+                <?php if (!empty($galleryImages)): ?>
+                    <!-- Category Filter -->
+                    <?php if (!empty($galleryCategories)): ?>
+                    <div class="text-center mb-4">
+                        <button class="btn btn-sm btn-outline-dark gallery-filter active" data-filter="all">All</button>
+                        <?php foreach ($galleryCategories as $cat): 
+                            if (!empty($cat['category'])):
+                        ?>
+                            <button class="btn btn-sm btn-outline-dark gallery-filter" data-filter="<?php echo htmlspecialchars($cat['category']); ?>">
+                                <?php echo htmlspecialchars($cat['category']); ?>
+                            </button>
+                        <?php 
+                            endif;
+                        endforeach; 
+                        ?>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <!-- Gallery Grid - No titles, no borders -->
+                    <div class="row g-0 gallery-container">
+                        <?php foreach ($galleryImages as $image): 
+                            $imageUrl = $image['image_url'];
+                            $thumbUrl = $image['thumbnail_url'] ?: $image['image_url'];
+                        ?>
+                            <div class="<?php echo $colClass; ?> gallery-item" data-category="<?php echo htmlspecialchars($image['category'] ?? ''); ?>">
+                                <div class="gallery-card">
+                                    <div class="gallery-image-container" onclick="openLightbox(<?php echo $image['id']; ?>)">
+                                        <img src="<?php echo htmlspecialchars($thumbUrl); ?>" 
+                                             alt="<?php echo htmlspecialchars($image['title']); ?>"
+                                             class="gallery-image"
+                                             data-id="<?php echo $image['id']; ?>"
+                                             data-full="<?php echo htmlspecialchars($imageUrl); ?>"
+                                             data-title="<?php echo htmlspecialchars($image['title']); ?>"
+                                             data-description="<?php echo htmlspecialchars($image['description']); ?>">
+                                        <div class="gallery-overlay">
+                                            <i class="bi bi-arrows-fullscreen"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    
+                    <!-- Lightbox Popup -->
+                    <div id="gallery-lightbox" class="lightbox">
+                        <span class="lightbox-close">&times;</span>
+                        <span class="lightbox-prev">&#10094;</span>
+                        <span class="lightbox-next">&#10095;</span>
+                        <div class="lightbox-content">
+                            <img id="lightbox-image" src="" alt="">
+                            <div class="lightbox-caption">
+                                <h4 id="lightbox-title"></h4>
+                                <p id="lightbox-description"></p>
+                            </div>
+                        </div>
+                        <!-- Slideshow Controls -->
+                        <div class="lightbox-controls">
+                            <button id="slideshow-play" class="btn btn-sm btn-light">
+                                <i class="bi bi-play-fill"></i> Play Slideshow
+                            </button>
+                            <button id="slideshow-stop" class="btn btn-sm btn-light" style="display: none;">
+                                <i class="bi bi-stop-fill"></i> Stop
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Audio for Slideshow (hidden) -->
+                    <?php if (!empty($slideshowMusicUrl)): ?>
+                    <audio id="slideshow-audio" loop style="display: none;">
+                        <source src="<?php echo htmlspecialchars($slideshowMusicUrl); ?>" type="audio/mpeg">
+                    </audio>
+                    <?php endif; ?>
+                    
+                <?php else: ?>
+                    <div class="text-center">
+                        <p class="text-muted">No gallery images available yet. Check back soon!</p>
+                    </div>
+                <?php endif; ?>
             </div>
         </section>
 
@@ -933,7 +1679,6 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
                                 <?php endif; ?>
                                 
                                 <div class="package-name"><?php echo htmlspecialchars($row['package_name']); ?></div>
-                                <div class="package-code"><?php echo htmlspecialchars($row['package_code']); ?></div>
                                 
                                 <div class="package-price">
                                     <span class="currency-symbol"><?php echo $currencySymbol; ?></span>
@@ -967,6 +1712,50 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
                         </div>
                     <?php endif; ?>
                 </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section - Dynamic from Database -->
+        <section id="faq" class="faq-section">
+            <div class="container">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                
+                <?php if (!empty($faqItems)): ?>
+                    <!-- Category Filter (Optional) -->
+                    <?php if (!empty($faqCategories)): ?>
+                    <div class="text-center mb-4">
+                        <button class="btn btn-sm btn-outline-dark faq-category-filter active" data-category="all">All</button>
+                        <?php foreach ($faqCategories as $cat): 
+                            if (!empty($cat['category'])):
+                        ?>
+                            <button class="btn btn-sm btn-outline-dark faq-category-filter" data-category="<?php echo htmlspecialchars($cat['category']); ?>">
+                                <?php echo htmlspecialchars($cat['category']); ?>
+                            </button>
+                        <?php 
+                            endif;
+                        endforeach; 
+                        ?>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <div class="faq-container">
+                        <?php foreach ($faqItems as $index => $item): ?>
+                            <div class="faq-item" data-category="<?php echo htmlspecialchars($item['category'] ?? ''); ?>">
+                                <div class="faq-question" onclick="toggleFAQ(this)">
+                                    <h4><?php echo htmlspecialchars($item['question']); ?></h4>
+                                    <span class="faq-icon">▼</span>
+                                </div>
+                                <div class="faq-answer">
+                                    <p><?php echo nl2br(htmlspecialchars($item['answer'])); ?></p>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="text-center">
+                        <p class="text-muted">No FAQs available yet. Check back soon!</p>
+                    </div>
+                <?php endif; ?>
             </div>
         </section>
 
@@ -1076,63 +1865,42 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
             </div>
         </section>
 
-        <!-- BLOG - Dynamic from Database -->
+        <!-- BLOG - Dynamic Carousel -->
         <section id="blog">
             <div class="container">
                 <h2 class="section-title">Latest from Our Blog</h2>
                 
                 <?php if (!empty($blogPosts)): ?>
-                    <div class="row g-4">
-                        <?php 
-                        $count = 0;
-                        foreach ($blogPosts as $post): 
-                            if ($count >= 5) break; // Show only 5 most recent posts
-                            $excerpt = $post['excerpt'] ?: (isset($post['content']) ? substr(strip_tags($post['content']), 0, 150) . '...' : 'Read more...');
-                        ?>
-                            <div class="col-lg-4 col-md-6">
-                                <div class="blog-card">
-                                    <div class="date"><?php echo date('F j, Y', strtotime($post['published_at'] ?: $post['created_at'])); ?></div>
-                                    <h3 class="blog-title"><?php echo htmlspecialchars($post['title']); ?></h3>
-                                    <div class="blog-excerpt <?php echo preg_match('/[ঀ-৿]/', $post['title']) ? 'bengali' : ''; ?>">
-                                        <?php echo htmlspecialchars($excerpt); ?>
+                    <div class="blog-carousel-container">
+                        <div class="blog-carousel">
+                            <?php foreach ($blogPosts as $post): 
+                                $excerpt = $post['excerpt'] ?: (isset($post['content']) ? substr(strip_tags($post['content']), 0, 150) . '...' : 'Read more...');
+                            ?>
+                                <div>
+                                    <div class="blog-card">
+                                        <div class="date"><?php echo date('F j, Y', strtotime($post['published_at'] ?: $post['created_at'])); ?></div>
+                                        <h3 class="blog-title"><?php echo htmlspecialchars($post['title']); ?></h3>
+                                        <div class="blog-excerpt <?php echo preg_match('/[ঀ-৿]/', $post['title']) ? 'bengali' : ''; ?>">
+                                            <?php echo htmlspecialchars($excerpt); ?>
+                                        </div>
+                                        <button class="read-more" onclick="openArticle(<?php echo $post['id']; ?>)">Read More</button>
                                     </div>
-                                    <button class="read-more" onclick="openArticle(<?php echo $post['id']; ?>)">Read More</button>
                                 </div>
-                            </div>
-                        <?php 
-                            $count++;
-                        endforeach; 
-                        ?>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                     
                     <!-- View All Blog Posts Link -->
                     <div class="text-center mt-5">
-                        <a href="blog.php" class="text-dark text-decoration-none border-bottom border-dark" style="font-size:1.1rem;">View All Articles →</a>
+                        <a href="blog.php" class="text-dark text-decoration-none border-bottom border-dark" style="font-size:1.1rem;">
+                            <i class="bi bi-journal-text"></i> View All Articles →
+                        </a>
                     </div>
                 <?php else: ?>
                     <div class="text-center">
                         <p class="text-muted">No blog posts available yet. Check back soon!</p>
                     </div>
                 <?php endif; ?>
-            </div>
-        </section>
-
-        <!-- LOGIN -->
-        <section id="login">
-            <div class="container">
-                <h2 class="section-title">Login</h2>
-                <div class="row justify-content-center">
-                    <div class="col-md-6 col-lg-5">
-                        <div class="border border-dark p-4 bg-white">
-                            <div class="mb-3"><input type="text" placeholder="username" class="form-control rounded-0 border-dark"></div>
-                            <div class="mb-3"><input type="password" placeholder="password" class="form-control rounded-0 border-dark"></div>
-                            <button class="btn btn-outline-dark rounded-0 w-100">→ sign in</button>
-                            <div class="text-center mt-3">
-                                <a href="admin/login.php" class="text-decoration-none small">Admin Login</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
     </main>
@@ -1229,12 +1997,190 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery (required for Slick) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Slick Carousel JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
     
     <!-- Custom JavaScript -->
     <script>
+        // Gallery data
+        let galleryImages = [];
+        let currentImageIndex = 0;
+        let slideshowInterval = null;
+        
+        <?php if (!empty($galleryImages)): ?>
+            galleryImages = [
+                <?php foreach ($galleryImages as $image): ?>
+                    {
+                        id: <?php echo $image['id']; ?>,
+                        url: '<?php echo addslashes($image['image_url']); ?>',
+                        title: '<?php echo addslashes($image['title']); ?>',
+                        description: '<?php echo addslashes($image['description']); ?>'
+                    },
+                <?php endforeach; ?>
+            ];
+        <?php endif; ?>
+        
+        // Open lightbox function
+        function openLightbox(id) {
+            const index = galleryImages.findIndex(img => img.id === id);
+            if (index !== -1) {
+                currentImageIndex = index;
+                updateLightboxImage();
+                document.getElementById('gallery-lightbox').classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        // Update lightbox image
+        function updateLightboxImage() {
+            const img = galleryImages[currentImageIndex];
+            document.getElementById('lightbox-image').src = img.url;
+            document.getElementById('lightbox-title').textContent = img.title || '';
+            document.getElementById('lightbox-description').textContent = img.description || '';
+        }
+        
+        // Close lightbox
+        document.querySelector('.lightbox-close').addEventListener('click', function() {
+            document.getElementById('gallery-lightbox').classList.remove('active');
+            document.body.style.overflow = 'auto';
+            stopSlideshow();
+        });
+        
+        // Previous image
+        document.querySelector('.lightbox-prev').addEventListener('click', function() {
+            currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
+            updateLightboxImage();
+        });
+        
+        // Next image
+        document.querySelector('.lightbox-next').addEventListener('click', function() {
+            currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+            updateLightboxImage();
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (!document.getElementById('gallery-lightbox').classList.contains('active')) return;
+            
+            if (e.key === 'Escape') {
+                document.getElementById('gallery-lightbox').classList.remove('active');
+                document.body.style.overflow = 'auto';
+                stopSlideshow();
+            } else if (e.key === 'ArrowLeft') {
+                currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
+                updateLightboxImage();
+            } else if (e.key === 'ArrowRight') {
+                currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+                updateLightboxImage();
+            }
+        });
+        
+        // Slideshow functions
+        function startSlideshow() {
+            const audio = document.getElementById('slideshow-audio');
+            if (audio) {
+                audio.play().catch(e => console.log('Audio autoplay failed:', e));
+            }
+            
+            document.getElementById('slideshow-play').style.display = 'none';
+            document.getElementById('slideshow-stop').style.display = 'inline-block';
+            
+            slideshowInterval = setInterval(function() {
+                currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+                updateLightboxImage();
+            }, <?php echo $slideshowDelay; ?>);
+        }
+        
+        function stopSlideshow() {
+            const audio = document.getElementById('slideshow-audio');
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+            }
+            
+            document.getElementById('slideshow-play').style.display = 'inline-block';
+            document.getElementById('slideshow-stop').style.display = 'none';
+            
+            if (slideshowInterval) {
+                clearInterval(slideshowInterval);
+                slideshowInterval = null;
+            }
+        }
+        
+        document.getElementById('slideshow-play').addEventListener('click', startSlideshow);
+        document.getElementById('slideshow-stop').addEventListener('click', stopSlideshow);
+        
+        // Gallery filter
+        document.querySelectorAll('.gallery-filter').forEach(button => {
+            button.addEventListener('click', function() {
+                const filter = this.dataset.filter;
+                
+                // Update active button
+                document.querySelectorAll('.gallery-filter').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Filter items
+                document.querySelectorAll('.gallery-item').forEach(item => {
+                    if (filter === 'all' || item.dataset.category === filter) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // FAQ Functions
+        function toggleFAQ(element) {
+            const faqItem = element.closest('.faq-item');
+            const isActive = faqItem.classList.contains('active');
+            
+            // Close all other FAQs
+            document.querySelectorAll('.faq-item.active').forEach(item => {
+                if (item !== faqItem) {
+                    item.classList.remove('active');
+                }
+            });
+            
+            // Toggle current FAQ
+            if (!isActive) {
+                faqItem.classList.add('active');
+            } else {
+                faqItem.classList.remove('active');
+            }
+        }
+
+        // FAQ Category Filter
+        document.querySelectorAll('.faq-category-filter').forEach(button => {
+            button.addEventListener('click', function() {
+                const category = this.dataset.category;
+                
+                // Update active button
+                document.querySelectorAll('.faq-category-filter').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Filter FAQ items
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    if (category === 'all' || item.dataset.category === category) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                        // Close if open
+                        item.classList.remove('active');
+                    }
+                });
+            });
+        });
+
         // Blog article opener function
         function openArticle(articleId) {
-            // Redirect to single blog post page (you'll need to create this)
+            // Redirect to single blog post page
             window.location.href = 'blog-post.php?id=' + articleId;
         }
 
@@ -1244,37 +2190,68 @@ $mapEmbedUrl = $settingsArray['map_embed_url'] ?? 'https://www.google.com/maps/e
             window.location.href = 'https://wa.me/<?php echo $whatsappNumber; ?>?text=Hi%20Framer!%20I%27m%20interested%20in%20your%20package%20' + packageCode + '.%20Please%20tell%20me%20more.';
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Get all menu items
-            const menuItems = document.querySelectorAll('.menu-item');
-            
-            // Get the offcanvas element
-            const offcanvasElement = document.getElementById('offcanvasMenu');
-            const offcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement) || new bootstrap.Offcanvas(offcanvasElement);
-            
-            // Add click event to each menu item
-            menuItems.forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Get the target section id from data-target attribute
-                    const targetId = this.getAttribute('data-target');
-                    const targetSection = document.getElementById(targetId);
-                    
-                    if (targetSection) {
-                        // Close the offcanvas menu first
-                        offcanvas.hide();
+        $(document).ready(function() {
+            // Initialize blog carousel
+            if ($('.blog-carousel').length) {
+                $('.blog-carousel').slick({
+                    dots: true,
+                    infinite: true,
+                    speed: 500,
+                    slidesToShow: 3,
+                    slidesToScroll: 1,
+                    autoplay: true,
+                    autoplaySpeed: 4000,
+                    arrows: true,
+                    responsive: [
+                        {
+                            breakpoint: 1024,
+                            settings: {
+                                slidesToShow: 2,
+                                slidesToScroll: 1,
+                                infinite: true,
+                                dots: true
+                            }
+                        },
+                        {
+                            breakpoint: 600,
+                            settings: {
+                                slidesToShow: 1,
+                                slidesToScroll: 1
+                            }
+                        }
+                    ]
+                });
+            }
+
+            // Handle smooth scrolling for anchor links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Only handle links that start with #
+                    if (this.getAttribute('href') && this.getAttribute('href').startsWith('#')) {
+                        e.preventDefault();
                         
-                        // Wait for offcanvas to close before scrolling
-                        setTimeout(function() {
-                            const navbarHeight = document.querySelector('.navbar-frame').offsetHeight;
-                            const targetPosition = targetSection.getBoundingClientRect().top + window.pageYOffset - navbarHeight - 20;
+                        const targetId = this.getAttribute('href');
+                        const targetSection = document.querySelector(targetId);
+                        
+                        if (targetSection) {
+                            // Close offcanvas if it's open
+                            const offcanvasElement = document.getElementById('offcanvasMenu');
+                            const offcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
+                            if (offcanvas) {
+                                offcanvas.hide();
+                            }
                             
-                            window.scrollTo({
-                                top: targetPosition,
-                                behavior: 'smooth'
-                            });
-                        }, 300);
+                            // Wait for offcanvas to close before scrolling
+                            setTimeout(function() {
+                                const navbarHeight = document.querySelector('.navbar-frame').offsetHeight;
+                                const targetPosition = targetSection.getBoundingClientRect().top + window.pageYOffset - navbarHeight - 20;
+                                
+                                window.scrollTo({
+                                    top: targetPosition,
+                                    behavior: 'smooth'
+                                });
+                            }, 300);
+                        }
                     }
                 });
             });

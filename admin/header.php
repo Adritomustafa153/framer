@@ -1,6 +1,6 @@
 <?php
 // admin/header.php
-require_once 'auth.php'; // Using require_once to prevent multiple inclusions
+require_once 'auth.php';
 requireLogin();
 
 // Get unread messages count
@@ -32,6 +32,7 @@ $unreadCount = $message->getUnreadCount();
             color: #ccc;
             border-radius: 0;
             padding: 12px 20px;
+            transition: all 0.3s;
         }
         .sidebar .nav-link:hover {
             color: white;
@@ -69,6 +70,18 @@ $unreadCount = $message->getUnreadCount();
             font-size: 0.7rem;
             margin-left: 5px;
         }
+        .nav-item-group {
+            border-top: 1px solid #333;
+            margin-top: 10px;
+            padding-top: 10px;
+        }
+        .nav-group-title {
+            padding: 8px 20px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+        }
     </style>
 </head>
 <body>
@@ -104,21 +117,45 @@ $unreadCount = $message->getUnreadCount();
                     <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'dashboard.php' ? 'active' : ''; ?>" href="dashboard.php">
                         <i class="bi bi-speedometer2"></i> Dashboard
                     </a>
+                    
+                    <div class="nav-group-title">CONTENT</div>
+                    
                     <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'package') !== false ? 'active' : ''; ?>" href="packages.php">
                         <i class="bi bi-box"></i> Packages
                     </a>
+                    <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'why-us') !== false ? 'active' : ''; ?>" href="why-us.php">
+    <i class="bi bi-question-circle"></i> Why Us
+</a>
+<a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'faq') !== false ? 'active' : ''; ?>" href="faq.php">
+    <i class="bi bi-chat-dots"></i> FAQs
+</a>
                     <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'blog') !== false ? 'active' : ''; ?>" href="blog.php">
                         <i class="bi bi-pencil-square"></i> Blog Posts
                     </a>
-                    <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'gallery') !== false ? 'active' : ''; ?>" href="gallery.php">
-                        <i class="bi bi-images"></i> Gallery
+                    
+                    <div class="nav-group-title">MEDIA</div>
+                    
+                    <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'slider') !== false ? 'active' : ''; ?>" href="slider.php">
+                        <i class="bi bi-images"></i> Slider Images
                     </a>
+                    <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'gallery') !== false && strpos($_SERVER['PHP_SELF'], 'gallery-settings') === false ? 'active' : ''; ?>" href="gallery.php">
+                        <i class="bi bi-collection"></i> Gallery
+                    </a>
+                    <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'gallery-settings') !== false ? 'active' : ''; ?>" href="gallery-settings.php">
+                        <i class="bi bi-gear"></i> Gallery Settings
+                    </a>
+                    
+                    <div class="nav-group-title">COMMUNICATION</div>
+                    
                     <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'messages') !== false ? 'active' : ''; ?>" href="messages.php">
                         <i class="bi bi-envelope"></i> Messages
                         <?php if ($unreadCount > 0): ?>
                             <span class="badge-unread"><?php echo $unreadCount; ?></span>
                         <?php endif; ?>
                     </a>
+                    
+                    <div class="nav-group-title">SYSTEM</div>
+                    
                     <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'users') !== false ? 'active' : ''; ?>" href="users.php">
                         <i class="bi bi-people"></i> Users
                     </a>

@@ -1,7 +1,5 @@
 <?php
-// admin/footer.php
-// IMPORTANT: No PHP code here that redeclares functions
-// Just close the HTML tags
+// admin/footer.php - NO PHP code here, just closing HTML tags
 ?>
             </div>
         </div>

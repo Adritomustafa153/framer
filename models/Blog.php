@@ -9,8 +9,8 @@ class Blog extends BaseModel {
         $slug = $this->createSlug($data['title']);
         
         $query = "INSERT INTO " . $this->table . "
-                  (title, slug, excerpt, content, featured_image, category, tags, author_id, status, published_at, meta_title, meta_description, meta_keywords, is_featured)
-                  VALUES (:title, :slug, :excerpt, :content, :featured_image, :category, :tags, :author_id, :status, :published_at, :meta_title, :meta_description, :meta_keywords, :is_featured)";
+                  (title, slug, excerpt, content, featured_image, category, tags, status, published_at, meta_title, meta_description, meta_keywords, is_featured)
+                  VALUES (:title, :slug, :excerpt, :content, :featured_image, :category, :tags, :status, :published_at, :meta_title, :meta_description, :meta_keywords, :is_featured)";
         
         $stmt = $this->conn->prepare($query);
         return $stmt->execute([
@@ -21,7 +21,6 @@ class Blog extends BaseModel {
             ':featured_image' => $data['featured_image'] ?? null,
             ':category' => $data['category'],
             ':tags' => json_encode($data['tags'] ?? []),
-            ':author_id' => $data['author_id'],
             ':status' => $data['status'],
             ':published_at' => $data['status'] == 'published' ? date('Y-m-d H:i:s') : null,
             ':meta_title' => $data['meta_title'] ?? $data['title'],
@@ -69,11 +68,10 @@ class Blog extends BaseModel {
     }
 
     public function getPublished() {
-        $query = "SELECT p.*, u.username as author_name 
-                  FROM " . $this->table . " p
-                  LEFT JOIN users u ON p.author_id = u.id
-                  WHERE p.status = 'published' 
-                  ORDER BY p.published_at DESC";
+        // Removed the JOIN with users table since author_id may not exist
+        $query = "SELECT * FROM " . $this->table . " 
+                  WHERE status = 'published' 
+                  ORDER BY published_at DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll();
@@ -100,6 +98,24 @@ class Blog extends BaseModel {
         }
         
         return $slug;
+    }
+    
+    // Optional: Add this method if you need to get posts with author info
+    public function getPublishedWithAuthor() {
+        // First check if author_id column exists
+        try {
+            $query = "SELECT p.*, u.username as author_name 
+                      FROM " . $this->table . " p
+                      LEFT JOIN users u ON p.author_id = u.id
+                      WHERE p.status = 'published' 
+                      ORDER BY p.published_at DESC";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            // If column doesn't exist, fall back to simple query
+            return $this->getPublished();
+        }
     }
 }
 ?>
