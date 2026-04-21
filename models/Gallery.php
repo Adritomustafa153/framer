@@ -1,5 +1,6 @@
 <?php
 // models/Gallery.php
+require_once __DIR__ . '/../config/database.php';
 require_once 'BaseModel.php';
 
 class Gallery extends BaseModel {
@@ -8,8 +9,8 @@ class Gallery extends BaseModel {
 
     public function create($data) {
         $query = "INSERT INTO " . $this->table . "
-                  (title, description, image_url, thumbnail_url, category, sort_order, is_active, is_featured, created_at)
-                  VALUES (:title, :description, :image_url, :thumbnail_url, :category, :sort_order, :is_active, :is_featured, NOW())";
+                  (title, description, image_url, thumbnail_url, category, photographer_id, sort_order, is_active, is_featured, created_at)
+                  VALUES (:title, :description, :image_url, :thumbnail_url, :category, :photographer_id, :sort_order, :is_active, :is_featured, NOW())";
         
         $stmt = $this->conn->prepare($query);
         return $stmt->execute([
@@ -18,6 +19,7 @@ class Gallery extends BaseModel {
             ':image_url' => $data['image_url'],
             ':thumbnail_url' => $data['thumbnail_url'] ?? $data['image_url'],
             ':category' => $data['category'] ?? '',
+            ':photographer_id' => $data['photographer_id'] ?? null,
             ':sort_order' => $data['sort_order'] ?? 0,
             ':is_active' => $data['is_active'] ?? 1,
             ':is_featured' => $data['is_featured'] ?? 0
@@ -31,6 +33,7 @@ class Gallery extends BaseModel {
                   image_url = :image_url,
                   thumbnail_url = :thumbnail_url,
                   category = :category,
+                  photographer_id = :photographer_id,
                   sort_order = :sort_order,
                   is_active = :is_active,
                   is_featured = :is_featured,
@@ -44,6 +47,7 @@ class Gallery extends BaseModel {
             ':image_url' => $data['image_url'],
             ':thumbnail_url' => $data['thumbnail_url'] ?? $data['image_url'],
             ':category' => $data['category'] ?? '',
+            ':photographer_id' => $data['photographer_id'] ?? null,
             ':sort_order' => $data['sort_order'] ?? 0,
             ':is_active' => $data['is_active'] ?? 1,
             ':is_featured' => $data['is_featured'] ?? 0,
@@ -58,18 +62,19 @@ class Gallery extends BaseModel {
         return $stmt->fetchAll();
     }
 
-    public function getFeatured() {
-        $query = "SELECT * FROM " . $this->table . " WHERE is_active = 1 AND is_featured = 1 ORDER BY sort_order ASC";
+    public function getByPhotographer($photographer_id) {
+        $query = "SELECT * FROM " . $this->table . " 
+                  WHERE is_active = 1 AND photographer_id = ? 
+                  ORDER BY sort_order ASC, id DESC";
         $stmt = $this->conn->prepare($query);
-        $stmt->execute();
+        $stmt->execute([$photographer_id]);
         return $stmt->fetchAll();
     }
 
-    public function getByCategory($category) {
-        $query = "SELECT * FROM " . $this->table . " WHERE is_active = 1 AND category = ? ORDER BY sort_order ASC";
+    public function incrementDownload($id) {
+        $query = "UPDATE " . $this->table . " SET download_count = download_count + 1 WHERE id = ?";
         $stmt = $this->conn->prepare($query);
-        $stmt->execute([$category]);
-        return $stmt->fetchAll();
+        return $stmt->execute([$id]);
     }
 
     public function getCategories() {

@@ -1,0 +1,502 @@
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Invoice - INV2026040006</title>
+            <style>
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                body {
+                    font-family: 'Arial', 'Helvetica', sans-serif;
+                    background: #f5f5f5;
+                    padding: 30px;
+                    font-size: 14px;
+                    line-height: 1.5;
+                    color: #333;
+                }
+                .invoice-wrapper {
+                    max-width: 1100px;
+                    margin: 0 auto;
+                    background: #fff;
+                    border-radius: 12px;
+                    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+                    overflow: hidden;
+                }
+                
+                /* Header Section */
+                .invoice-header {
+                    background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);
+                    padding: 25px 30px;
+                    position: relative;
+                }
+                .header-content {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    flex-wrap: wrap;
+                    gap: 20px;
+                }
+                .logo-section {
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                }
+                .logo {
+                    width: 60px;
+                    height: 60px;
+                    background: #fff;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 28px;
+                    font-weight: bold;
+                    color: #1a2a3a;
+                }
+                .company-name h2 {
+                    color: #fff;
+                    font-size: 26px;
+                    margin-bottom: 5px;
+                    letter-spacing: 1px;
+                }
+                .company-name p {
+                    color: rgba(255,255,255,0.8);
+                    font-size: 11px;
+                }
+                .invoice-title {
+                    text-align: right;
+                }
+                .invoice-title h1 {
+                    font-size: 28px;
+                    font-weight: bold;
+                    color: #ff6b6b;
+                    margin-bottom: 5px;
+                }
+                .invoice-title p {
+                    font-size: 14px;
+                    color: rgba(255,255,255,0.7);
+                }
+                
+                /* Info Section */
+                .info-section {
+                    padding: 25px 30px;
+                    background: #f9f9f9;
+                    border-bottom: 1px solid #eee;
+                }
+                .info-grid {
+                    display: flex;
+                    justify-content: space-between;
+                    flex-wrap: wrap;
+                    gap: 25px;
+                }
+                .company-details, .client-details {
+                    flex: 1;
+                    min-width: 250px;
+                }
+                .company-details h3, .client-details h3 {
+                    color: #1a2a3a;
+                    font-size: 16px;
+                    margin-bottom: 12px;
+                    padding-bottom: 6px;
+                    border-bottom: 2px solid #ff6b6b;
+                    display: inline-block;
+                }
+                .company-details p, .client-details p {
+                    margin: 6px 0;
+                    color: #555;
+                    font-size: 13px;
+                }
+                .invoice-meta {
+                    margin-top: 20px;
+                    background: #fff;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    display: flex;
+                    justify-content: space-between;
+                    flex-wrap: wrap;
+                    gap: 15px;
+                    border: 1px solid #e0e0e0;
+                }
+                .meta-item {
+                    flex: 1;
+                }
+                .meta-item strong {
+                    color: #1a2a3a;
+                    display: block;
+                    margin-bottom: 4px;
+                    font-size: 12px;
+                }
+                .status-badge {
+                    display: inline-block;
+                    padding: 4px 12px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                    font-weight: bold;
+                }
+                .status-paid { background: #d4edda; color: #155724; }
+                .status-partial { background: #fff3cd; color: #856404; }
+                .status-unpaid { background: #f8d7da; color: #721c24; }
+                
+                /* Event Section */
+                .event-section {
+                    padding: 20px 30px;
+                    background: #fef9e6;
+                    border-bottom: 1px solid #eee;
+                }
+                .event-details {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 20px;
+                }
+                .event-item {
+                    flex: 1;
+                    min-width: 180px;
+                }
+                .event-item strong {
+                    color: #ff6b6b;
+                    display: block;
+                    margin-bottom: 4px;
+                    font-size: 12px;
+                }
+                
+                /* Table Styles */
+                .items-section {
+                    padding: 25px 30px;
+                }
+                .section-title {
+                    font-size: 18px;
+                    font-weight: bold;
+                    color: #1a2a3a;
+                    margin-bottom: 15px;
+                    padding-bottom: 8px;
+                    border-bottom: 2px solid #ff6b6b;
+                    display: inline-block;
+                }
+                .items-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 25px;
+                }
+                .items-table th {
+                    background: #1a2a3a;
+                    color: #fff;
+                    padding: 12px;
+                    text-align: left;
+                    font-weight: 600;
+                    font-size: 13px;
+                }
+                .items-table td {
+                    padding: 10px 12px;
+                    border-bottom: 1px solid #e9ecef;
+                    font-size: 13px;
+                }
+                .items-table .text-right {
+                    text-align: right;
+                }
+                
+                /* Totals Section */
+                .totals-section {
+                    display: flex;
+                    justify-content: flex-end;
+                    margin-top: 20px;
+                }
+                .totals-table {
+                    width: 350px;
+                    border-collapse: collapse;
+                }
+                .totals-table td {
+                    padding: 8px;
+                    font-size: 13px;
+                }
+                .totals-table .grand-total {
+                    font-size: 16px;
+                    font-weight: bold;
+                    border-top: 2px solid #ff6b6b;
+                    padding-top: 12px;
+                    margin-top: 5px;
+                }
+                
+                /* Special Notes */
+                .special-notes {
+                    margin-top: 25px;
+                    padding: 15px 20px;
+                    background: #fef9e6;
+                    border-left: 4px solid #ff6b6b;
+                    border-radius: 4px;
+                }
+                .special-notes h4 {
+                    color: #ff6b6b;
+                    margin-bottom: 8px;
+                    font-size: 14px;
+                }
+                .special-notes p {
+                    color: #555;
+                    font-size: 13px;
+                    line-height: 1.6;
+                }
+                
+                /* Terms Section */
+                .terms-section {
+                    padding: 25px 30px;
+                    background: #f9f9f9;
+                    border-top: 1px solid #eee;
+                }
+                .terms-section h4 {
+                    color: #1a2a3a;
+                    margin-bottom: 15px;
+                    font-size: 16px;
+                }
+                .terms-section p {
+                    margin: 5px 0;
+                    font-size: 11px;
+                    color: #666;
+                    line-height: 1.5;
+                }
+                
+                /* Footer */
+                .invoice-footer {
+                    background: #1a2a3a;
+                    color: rgba(255,255,255,0.7);
+                    text-align: center;
+                    padding: 15px;
+                    font-size: 11px;
+                }
+                .invoice-footer p {
+                    margin: 4px 0;
+                }
+                
+                /* Barcode */
+                .barcode-section {
+                    text-align: center;
+                    padding: 15px;
+                    background: #fff;
+                    margin: 10px 0;
+                }
+                .barcode {
+                    font-family: 'Courier New', monospace;
+                    font-size: 24px;
+                    letter-spacing: 2px;
+                    margin: 5px 0;
+                }
+                
+                @media print {
+                    body {
+                        background: white;
+                        padding: 0;
+                    }
+                    .invoice-wrapper {
+                        box-shadow: none;
+                        margin: 0;
+                    }
+                    .invoice-header {
+                        background: #1a2a3a;
+                        -webkit-print-color-adjust: exact;
+                        print-color-adjust: exact;
+                    }
+                    .items-table th {
+                        background: #1a2a3a;
+                        -webkit-print-color-adjust: exact;
+                        print-color-adjust: exact;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="invoice-wrapper">
+                <!-- Header -->
+                <div class="invoice-header">
+                    <div class="header-content">
+                        <div class="logo-section">
+                            <div class="logo">📷</div>
+                            <div class="company-name">
+                                <h2>FRAMER PHOTOGRAPHY</h2>
+                                <p>framing your happiness</p>
+                            </div>
+                        </div>
+                        <div class="invoice-title">
+                            <h1>INVOICE</h1>
+                            <p>INV2026040006</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Info Section -->
+                <div class="info-section">
+                    <div class="info-grid">
+                        <div class="company-details">
+                            <h3>FROM</h3>
+                            <p><strong>Framer Photography</strong></p>
+                            <p>Rajonigondha Vally, 178/B Khilgaon Chowdhurypara</p>
+                            <p>Dhaka 1219, Bangladesh</p>
+                            <p>📞 +8801829093616</p>
+                            <p>✉️ framer.wedding@gmail.com</p>
+                        </div>
+                        <div class="client-details">
+                            <h3>BILL TO</h3>
+                            <p><strong>Eshti Ahmed &amp; Ayna Akter</strong></p>
+                                                            <p>Bride: Eshti Ahmed</p>
+                                                                                        <p>Groom: Ayna Akter</p>
+                                                        <p>📧 Eshti@gmail.com</p>
+                            <p>📞 01950463204</p>
+                                                    </div>
+                    </div>
+                    
+                    <div class="invoice-meta">
+                        <div class="meta-item">
+                            <strong>Invoice Date</strong>
+                            April 01, 2026                        </div>
+                        <div class="meta-item">
+                            <strong>Due Date</strong>
+                            May 01, 2026                        </div>
+                        <div class="meta-item">
+                            <strong>Booking ID</strong>
+                            BK2026040007                        </div>
+                        <div class="meta-item">
+                            <strong>Status</strong>
+                            <span class="status-badge status-partial">
+                                Partial                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Event Details -->
+                                <div class="event-section">
+                    <div class="event-details">
+                        <div class="event-item">
+                            <strong>Event Date</strong>
+                            Thursday, April 30, 2026                        </div>
+                                                <div class="event-item">
+                            <strong>Event Time</strong>
+                            12:12 AM                        </div>
+                                                                        <div class="event-item">
+                            <strong>Venue</strong>
+                            bAdda                        </div>
+                                            </div>
+                </div>
+                                
+                <!-- Package Details -->
+                <div class="items-section">
+                    <div class="section-title">PACKAGE DETAILS</div>
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th>Package Name</th>
+                                <th>Description</th>
+                                <th class="text-right">Duration</th>
+                                <th class="text-right">Qty</th>
+                                <th class="text-right">Amount (BDT)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>test 1</strong></td>
+                                <td>Will cover the event for 5 Hours with One senior photographer, One Assistant photographer</td>
+                                <td class="text-right">5 Hours</td>
+                                <td class="text-right">1</td>
+                                <td class="text-right">৳ 12,500.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <!-- Add-ons -->
+                                        <div class="section-title" style="margin-top: 25px;">ADD-ON SERVICES</div>
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Description</th>
+                                <th class="text-right">Qty</th>
+                                <th class="text-right">Unit Price</th>
+                                <th class="text-right">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                                        <tr>
+                                <td><strong>Photobook</strong></td>
+                                <td>Premium photobook with 20 pages</td>
+                                <td class="text-right">1</td>
+                                <td class="text-right">৳ 2,500.00</td>
+                                <td class="text-right">৳ 2,500.00</td>
+                            </tr>
+                                                        <tr>
+                                <td><strong>Engagement Coverage</strong></td>
+                                <td>Coverage of engagement ceremony</td>
+                                <td class="text-right">1</td>
+                                <td class="text-right">৳ 3,500.00</td>
+                                <td class="text-right">৳ 3,500.00</td>
+                            </tr>
+                                                    </tbody>
+                    </table>
+                                        
+                    <!-- Totals -->
+                    <div class="totals-section">
+                        <table class="totals-table">
+                            <tr>
+                                <td>Subtotal:</td>
+                                <td class="text-right">৳ 12,500.00</td>
+                            </tr>
+                                                        <tr>
+                                <td>Add-ons Total:</td>
+                                <td class="text-right">৳ 6,000.00</td>
+                            </tr>
+                                                        <tr class="grand-total">
+                                <td><strong>Total Amount:</strong></td>
+                                <td class="text-right"><strong>৳ 18,500.00</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Paid Amount:</td>
+                                <td class="text-right">৳ 9,000.00</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Due Amount:</strong></td>
+                                <td class="text-right">
+                                    <strong style="color: #dc3545">
+                                        ৳ 9,500.00                                    </strong>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="padding-top: 10px; font-style: italic; font-size: 11px;">
+                                    Due amount in words: Taka Nine Thousand Five Hundred only
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <!-- Special Notes -->
+                                        <div class="special-notes">
+                        <h4>Special Notes</h4>
+                        <p>indoor special</p>
+                    </div>
+                                        
+                    <!-- Barcode -->
+                    <div class="barcode-section">
+                        <div class="barcode">
+                            INV2026040006                        </div>
+                        <small>Invoice Reference Number</small>
+                    </div>
+                </div>
+                
+                <!-- Terms and Conditions -->
+                <div class="terms-section">
+                    <h4>Terms and Conditions</h4>
+                    <p><strong>1. Payment Terms:</strong> A 50% advance payment is required to confirm the booking. Remaining balance is due on the day of the event.</p>
+                    <p><strong>2. Cancellation Policy:</strong> Cancellations made 30+ days before the event receive 80% refund. 15-29 days receive 50% refund. Less than 15 days are non-refundable.</p>
+                    <p><strong>3. Delivery Policy:</strong> Images will be delivered within 4-6 weeks after the event. Videos within 8-12 weeks.</p>
+                    <p><strong>4. Usage & Copyright:</strong> Framer Photography retains copyright. Images for personal use only. Commercial use requires permission.</p>
+                    <p><strong>5. Additional Charges:</strong> Additional hours: 2,000 BDT/hour. Travel outside Dhaka: Actual cost + accommodation.</p>
+                </div>
+                
+                <!-- Footer -->
+                <div class="invoice-footer">
+                    <p>Thank you for choosing Framer Photography - framing your happiness!</p>
+                    <p>For inquiries: framer.wedding@gmail.com | +880 1829-093616</p>
+                    <p>This is a computer-generated invoice. No signature is required.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        

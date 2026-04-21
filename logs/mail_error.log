@@ -1,0 +1,13 @@
+[21-Apr-2026 22:48:55 Europe/Berlin] AJAX handler called. POST data: Array
+(
+    [id] => 1
+    [email] => adrito642@gmail.com
+    [message] => 
+)
+
+[21-Apr-2026 22:55:45 Europe/Berlin] AJAX handler called. POST data: Array
+(
+)
+
+[21-Apr-2026 22:55:45 Europe/Berlin] AJAX error: Invalid request method
+[21-Apr-2026 23:00:15 Europe/Berlin] Gallery share error: Invalid request method

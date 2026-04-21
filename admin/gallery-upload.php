@@ -6,11 +6,16 @@ ob_start();
 
 require_once '../config/database.php';
 require_once '../models/Gallery.php';
+require_once '../models/Photographer.php';
 require_once 'header.php';
 
 $database = new Database();
 $db = $database->getConnection();
 $gallery = new Gallery($db);
+$photographer = new Photographer($db);
+
+// Get all active photographers for dropdown
+$photographers = $photographer->getActive();
 
 // Handle multiple image upload
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['upload_multiple'])) {
@@ -59,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['upload_multiple'])) {
                         'image_url' => 'uploads/gallery/' . $fileName,
                         'thumbnail_url' => 'uploads/gallery/thumb_' . $fileName,
                         'category' => $_POST['category'] ?? '',
+                        'photographer_id' => !empty($_POST['photographer_id']) ? $_POST['photographer_id'] : null,
                         'sort_order' => 0,
                         'is_active' => 1,
                         'is_featured' => 0
@@ -180,10 +186,27 @@ function createThumbnail($source, $destination, $width, $height) {
                         <small class="text-muted">You can select multiple images at once. Max file size: 5MB per image. Allowed: JPG, PNG, GIF, WEBP</small>
                     </div>
                     
-                    <div class="mb-3">
-                        <label class="form-label">Category (Optional)</label>
-                        <input type="text" name="category" class="form-control" placeholder="e.g., Wedding, Portrait, Event">
-                        <small class="text-muted">Images will be grouped by this category</small>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Category (Optional)</label>
+                                <input type="text" name="category" class="form-control" placeholder="e.g., Wedding, Portrait, Event">
+                                <small class="text-muted">Images will be grouped by this category</small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Photographer (Optional)</label>
+                                <select name="photographer_id" class="form-control">
+                                    <option value="">-- Select Photographer --</option>
+                                    <?php foreach ($photographers as $p): ?>
+                                        <option value="<?php echo $p['id']; ?>"><?php echo htmlspecialchars($p['name']); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <small class="text-muted">Select the photographer who took these images</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 

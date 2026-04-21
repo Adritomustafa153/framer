@@ -1,5 +1,6 @@
 <?php
 // models/Package.php
+require_once __DIR__ . '/../config/database.php';
 require_once 'BaseModel.php';
 
 class Package extends BaseModel {
@@ -8,27 +9,27 @@ class Package extends BaseModel {
     public function create($data) {
         // Check if package code already exists
         if ($this->codeExists($data['package_code'])) {
-            // Generate a unique code by adding a timestamp or random number
             $data['package_code'] = $this->generateUniqueCode($data['package_code']);
         }
         
         $query = "INSERT INTO " . $this->table . "
-                  (package_name, package_code, price, currency, duration, description, features, is_featured, sort_order)
-                  VALUES (:name, :code, :price, :currency, :duration, :description, :features, :is_featured, :sort_order)";
+                  (package_name, category, package_code, price, currency, duration, description, features, image_url, is_featured, sort_order, created_at)
+                  VALUES (:name, :category, :code, :price, :currency, :duration, :description, :features, :image_url, :is_featured, :sort_order, NOW())";
         
         $stmt = $this->conn->prepare($query);
         
-        // Convert features array to JSON if it's an array
         $features = is_array($data['features']) ? json_encode($data['features']) : $data['features'];
         
         return $stmt->execute([
             ':name' => $data['package_name'],
+            ':category' => $data['category'] ?? 'Other',
             ':code' => $data['package_code'],
             ':price' => $data['price'],
             ':currency' => $data['currency'],
             ':duration' => $data['duration'],
-            ':description' => $data['description'],
+            ':description' => $data['description'] ?? '',
             ':features' => $features,
+            ':image_url' => $data['image_url'] ?? '',
             ':is_featured' => $data['is_featured'] ?? 0,
             ':sort_order' => $data['sort_order'] ?? 0
         ]);
@@ -37,36 +38,39 @@ class Package extends BaseModel {
     public function update($id, $data) {
         // Check if package code already exists for a DIFFERENT package
         if ($this->codeExistsForDifferentId($data['package_code'], $id)) {
-            // Generate a unique code
             $data['package_code'] = $this->generateUniqueCode($data['package_code']);
         }
         
         $query = "UPDATE " . $this->table . " SET
                   package_name = :name,
+                  category = :category,
                   package_code = :code,
                   price = :price,
                   currency = :currency,
                   duration = :duration,
                   description = :description,
                   features = :features,
+                  image_url = :image_url,
                   is_featured = :is_featured,
                   is_active = :is_active,
-                  sort_order = :sort_order
+                  sort_order = :sort_order,
+                  updated_at = NOW()
                   WHERE id = :id";
         
         $stmt = $this->conn->prepare($query);
         
-        // Convert features array to JSON if it's an array
         $features = is_array($data['features']) ? json_encode($data['features']) : $data['features'];
         
         return $stmt->execute([
             ':name' => $data['package_name'],
+            ':category' => $data['category'] ?? 'Other',
             ':code' => $data['package_code'],
             ':price' => $data['price'],
             ':currency' => $data['currency'],
             ':duration' => $data['duration'],
-            ':description' => $data['description'],
+            ':description' => $data['description'] ?? '',
             ':features' => $features,
+            ':image_url' => $data['image_url'] ?? '',
             ':is_featured' => $data['is_featured'] ?? 0,
             ':is_active' => $data['is_active'] ?? 1,
             ':sort_order' => $data['sort_order'] ?? 0,
@@ -107,6 +111,55 @@ class Package extends BaseModel {
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll();
+    }
+    
+    public function getActive() {
+        $query = "SELECT * FROM " . $this->table . " WHERE is_active = 1 ORDER BY is_featured DESC, sort_order ASC, id DESC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+    
+    public function getByCategory($category) {
+        $query = "SELECT * FROM " . $this->table . " WHERE is_active = 1 AND category = ? ORDER BY is_featured DESC, sort_order ASC, id DESC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$category]);
+        return $stmt->fetchAll();
+    }
+    
+    public function getCategories() {
+        $query = "SELECT DISTINCT category, COUNT(*) as count FROM " . $this->table . " WHERE is_active = 1 AND category IS NOT NULL AND category != '' GROUP BY category ORDER BY category ASC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+    
+    public function incrementDownload($id) {
+        $query = "UPDATE " . $this->table . " SET download_count = download_count + 1, popularity = popularity + 1 WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute([$id]);
+    }
+    
+    public function getPopular() {
+        $query = "SELECT * FROM " . $this->table . " WHERE is_active = 1 ORDER BY popularity DESC, download_count DESC LIMIT 6";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+    
+    // Method to get package by ID with all fields
+    public function getById($id) {
+        $query = "SELECT * FROM " . $this->table . " WHERE id = ? LIMIT 1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$id]);
+        $result = $stmt->fetch();
+        
+        // If features is stored as JSON, decode it
+        if ($result && isset($result['features']) && is_string($result['features'])) {
+            $result['features'] = json_decode($result['features'], true);
+        }
+        
+        return $result;
     }
 }
 ?>

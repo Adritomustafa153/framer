@@ -1,0 +1,671 @@
+
+[2026-03-10 17:30:08] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 11 =====
+Fetching booking details...
+BOOKING DATA:
+Array
+(
+    [id] => 11
+    [booking_number] => BK2026030011
+    [client_id] => 11
+    [package_id] => 1
+    [package_name] => test 1
+    [package_price] => 12500.00
+    [event_type] => Wedding
+    [event_date] => 2026-03-10
+    [event_time] => 21:43:00
+    [venue_name] => Grand Taj
+    [venue_address] => 
+    [special_notes] => 
+    [status] => pending
+    [booking_date] => 2026-03-10 21:43:35
+    [created_by] => 1
+    [created_at] => 2026-03-10 21:43:35
+    [updated_at] => 2026-03-10 21:43:35
+    [bride_name] => Nisha
+    [groom_name] => Asad
+    [email] => adrito642@gmail.com
+    [phone] => 01950463204
+    [address] => 
+    [created_by_name] => Admintest
+)
+
+PACKAGE DATA FROM BOOKING:
+package_id: 1
+package_name: test 1
+package_price: 12500.00
+CLIENT FOUND: Nisha & Asad
+ADDONS FOUND: 1 items, TOTAL: 2500.00
+Method 1: Using package_name from booking: test 1
+Method 1: Using package_price from booking: 12500
+Method 2: Attempting to fetch package from database with ID: 1
+Method 2: Package found in database:
+Array
+(
+    [id] => 1
+    [package_name] => test 1
+    [category] => Wedding
+    [package_code] => t01
+    [price] => 12500.00
+    [currency] => BDT
+    [duration] => 5 Hours
+    [description] => Will cover the event for 5 Hours with One senior photographer, One Assistant photographer
+    [popularity] => 0
+    [download_count] => 0
+    [features] => ["50 Editted Images, Unlimited Shoots, All Images will be deliver via google drive"]
+    [image_url] => 
+    [is_featured] => 1
+    [is_active] => 1
+    [sort_order] => 1
+    [created_at] => 2026-03-06 04:13:20
+    [updated_at] => 2026-03-09 19:52:59
+)
+
+Features loaded: 1 items
+FINAL PACKAGE VALUES:
+package_name: test 1
+package_price: 12500
+package_duration: 5 Hours
+Using existing invoice ID: 11
+Payments found: 0, Total paid: 0.00
+TOTALS: Package: 12500, Addons: 2500.00, Grand: 15000, Due: 15000
+Using features for description: 50 Editted Images, Unlimited Shoots, All Images will be deliver via google drive
+DISPLAY VALUES: Name=test 1, Price=12,500.00, Duration=5 Hours
+PDF generated successfully
+Invoice saved: uploads/invoices/Invoice_INV2026030011_20260310.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-03-10 17:54:06] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 11 =====
+Fetching booking details...
+BOOKING DATA:
+Array
+(
+    [id] => 11
+    [booking_number] => BK2026030011
+    [client_id] => 11
+    [package_id] => 1
+    [package_name] => test 1
+    [package_price] => 12500.00
+    [event_type] => Wedding
+    [event_date] => 2026-03-10
+    [event_time] => 21:43:00
+    [venue_name] => Grand Taj
+    [venue_address] => 
+    [special_notes] => 
+    [status] => pending
+    [booking_date] => 2026-03-10 21:43:35
+    [created_by] => 1
+    [created_at] => 2026-03-10 21:43:35
+    [updated_at] => 2026-03-10 21:43:35
+    [bride_name] => Nisha
+    [groom_name] => Asad
+    [email] => adrito642@gmail.com
+    [phone] => 01950463204
+    [address] => 
+    [created_by_name] => Admintest
+)
+
+PACKAGE DATA FROM BOOKING:
+package_id: 1
+package_name: test 1
+package_price: 12500.00
+CLIENT FOUND: Nisha & Asad
+ADDONS FOUND: 2 items, TOTAL: 3300.00
+Method 1: Using package_name from booking: test 1
+Method 1: Using package_price from booking: 12500
+Method 2: Attempting to fetch package from database with ID: 1
+Method 2: Package found in database:
+Array
+(
+    [id] => 1
+    [package_name] => test 1
+    [category] => Wedding
+    [package_code] => t01
+    [price] => 12500.00
+    [currency] => BDT
+    [duration] => 5 Hours
+    [description] => Will cover the event for 5 Hours with One senior photographer, One Assistant photographer
+    [popularity] => 0
+    [download_count] => 0
+    [features] => ["50 Editted Images, Unlimited Shoots, All Images will be deliver via google drive"]
+    [image_url] => 
+    [is_featured] => 1
+    [is_active] => 1
+    [sort_order] => 1
+    [created_at] => 2026-03-06 04:13:20
+    [updated_at] => 2026-03-09 19:52:59
+)
+
+Features loaded: 1 items
+FINAL PACKAGE VALUES:
+package_name: test 1
+package_price: 12500
+package_duration: 5 Hours
+Using existing invoice ID: 11
+Payments found: 0, Total paid: 0.00
+TOTALS: Package: 12500, Addons: 3300.00, Grand: 15800, Due: 15800
+Using feature for description: 50 Editted Images, Unlimited Shoots, All Images will be deliver via google drive
+DISPLAY VALUES: Name=test 1, Price=12,500.00, Duration=5 Hours
+PDF generated successfully
+Invoice saved: uploads/invoices/Invoice_INV2026030011_20260310.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-03-10 18:01:00] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 12 =====
+Fetching booking details...
+===== FULL BOOKING DATA =====
+id: 12
+booking_number: BK2026030012
+client_id: 12
+package_id: 2
+package_name: test 2
+package_price: 15000.00
+event_type: Wedding
+event_date: 2026-03-10
+event_time: 23:00:00
+venue_name: Grand Taj
+venue_address: 153/B Malibagh Chowdhury Para Rd
+special_notes: Jani na
+status: pending
+booking_date: 2026-03-10 23:01:00
+created_by: 1
+created_at: 2026-03-10 23:01:00
+updated_at: 2026-03-10 23:01:00
+bride_name: Nisha
+groom_name: Asad
+email: adrito642@gmail.com
+phone: 01950463204
+address: 153/B Malibagh Chowdhury Para Rd
+created_by_name: Admintest
+===== PACKAGE DATA FROM BOOKING =====
+package_id: 2
+package_name: test 2
+package_price: 15000.00
+duration: NULL
+description: NULL
+CLIENT FOUND: Nisha & Asad
+ADDONS FOUND: 0 items, TOTAL: 0.00
+Method 1: Using package_name from booking: test 2
+Method 1: Using package_price from booking: 15000
+Method 2: Attempting to fetch package from database with ID: 2
+Method 2: Package found in database:
+  id: 2
+  package_name: test 2
+  category: Portrait
+  package_code: ESS-02
+  price: 15000.00
+  currency: BDT
+  duration: 5 Hours
+  description: 2 Photographer & Assistant photographer will cover the Event
+  popularity: 0
+  download_count: 0
+  features: ["50 editted image will be provided , Unlimited shoots, All photos will deliver via drive"]
+  image_url: 
+  is_featured: 1
+  is_active: 1
+  sort_order: 2
+  created_at: 2026-03-06 04:13:20
+  updated_at: 2026-03-09 19:52:59
+Features loaded: 1 items
+===== FINAL PACKAGE VALUES =====
+package_name: test 2
+package_price: 15000
+package_duration: 5 Hours
+package_description: 
+Using existing invoice ID: 12
+Payments found: 1, Total paid: 10000.00
+TOTALS: Package: 15000, Addons: 0.00, Grand: 15000, Due: 5000
+Using features for description: 50 editted image will be provided , Unlimited shoots, All photos will deliver via drive
+DISPLAY VALUES: Name=test 2, Price=15,000.00, Duration=5 Hours
+PDF generated successfully
+Invoice saved: uploads/invoices/Invoice_INV2026030012_20260310.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-03-10 18:03:58] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 12 =====
+Fetching booking details...
+===== FULL BOOKING DATA =====
+id: 12
+booking_number: BK2026030012
+client_id: 12
+package_id: 2
+package_name: test 2
+package_price: 15000.00
+event_type: Wedding
+event_date: 2026-03-10
+event_time: 23:00:00
+venue_name: Grand Taj
+venue_address: 153/B Malibagh Chowdhury Para Rd
+special_notes: Jani na
+status: pending
+booking_date: 2026-03-10 23:01:00
+created_by: 1
+created_at: 2026-03-10 23:01:00
+updated_at: 2026-03-10 23:01:00
+bride_name: Nisha
+groom_name: Asad
+email: adrito642@gmail.com
+phone: 01950463204
+address: 153/B Malibagh Chowdhury Para Rd
+created_by_name: Admintest
+===== PACKAGE DATA FROM BOOKING =====
+package_id: 2
+package_name: test 2
+package_price: 15000.00
+duration: NULL
+description: NULL
+CLIENT FOUND: Nisha & Asad
+ADDONS FOUND: 1 items, TOTAL: 6000.00
+Method 1: Using package_name from booking: test 2
+Method 1: Using package_price from booking: 15000
+Method 2: Attempting to fetch package from database with ID: 2
+Method 2: Package found in database:
+  id: 2
+  package_name: test 2
+  category: Portrait
+  package_code: ESS-02
+  price: 15000.00
+  currency: BDT
+  duration: 5 Hours
+  description: 2 Photographer & Assistant photographer will cover the Event
+  popularity: 0
+  download_count: 0
+  features: ["50 editted image will be provided , Unlimited shoots, All photos will deliver via drive"]
+  image_url: 
+  is_featured: 1
+  is_active: 1
+  sort_order: 2
+  created_at: 2026-03-06 04:13:20
+  updated_at: 2026-03-09 19:52:59
+Features loaded: 1 items
+===== FINAL PACKAGE VALUES =====
+package_name: test 2
+package_price: 15000
+package_duration: 5 Hours
+package_description: 
+Using existing invoice ID: 12
+Payments found: 1, Total paid: 10000.00
+TOTALS: Package: 15000, Addons: 6000.00, Grand: 21000, Due: 11000
+Using features for description: 50 editted image will be provided , Unlimited shoots, All photos will deliver via drive
+DISPLAY VALUES: Name=test 2, Price=15,000.00, Duration=5 Hours
+PDF generated successfully
+Invoice saved: uploads/invoices/Invoice_INV2026030012_20260310.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-03-10 18:17:00] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 12 =====
+Fetching booking details...
+
+[2026-03-10 18:18:12] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 13 =====
+Fetching booking details...
+
+[2026-03-10 18:20:30] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 13 =====
+Fetching booking details...
+
+[2026-03-10 18:26:09] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 14 =====
+Fetching booking details...
+===== BOOKING DATA START =====
+id: 14
+booking_number: BK2026030014
+client_id: 14
+package_id: 2
+package_name: test 2
+package_price: 15000.00
+event_type: Wedding
+event_date: 2026-03-10
+event_time: 11:25:00
+venue_name: Grand Taj
+venue_address: 
+special_notes: Outdoor
+status: pending
+booking_date: 2026-03-10 23:26:09
+created_by: 1
+created_at: 2026-03-10 23:26:09
+updated_at: 2026-03-10 23:26:09
+bride_name: Rubaba
+groom_name: Nahid
+email: adrito642@gmail.com
+phone: 01950463204
+address: 
+created_by_name: Admintest
+===== BOOKING DATA END =====
+Client found: Rubaba & Nahid
+Addons found: 0, Total: 0.00
+Package from booking - Name: test 2, Price: 15000, Duration: Full Day
+Attempting to fetch package from DB with ID: 2
+Package found in DB
+Features loaded: 1
+Using existing invoice ID: 14, Number: INV2026030014
+Payments found: 1, Total paid: 8000.00
+TOTALS - Package: 15000, Addons: 0.00, Grand: 15000, Due: 7000
+DISPLAY VALUES - Name: test 2, Price: 15000, Duration: 5 Hours, Desc: 50 editted image will be provided , Unlimited shoots, All photos will deliver via drive
+PDF generated successfully
+Invoice saved: uploads/invoices/Invoice_INV2026030014_20260310.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-03-10 18:41:22] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 15 =====
+Fetching booking details...
+===== BOOKING DATA START =====
+id: 15
+booking_number: BK2026030015
+client_id: 15
+package_id: 2
+package_name: test 2
+package_price: 15000.00
+event_type: Wedding
+event_date: 2026-03-10
+event_time: 23:41:00
+venue_name: Grand Taj
+venue_address: 
+special_notes: Hudai
+status: pending
+booking_date: 2026-03-10 23:41:22
+created_by: 1
+created_at: 2026-03-10 23:41:22
+updated_at: 2026-03-10 23:41:22
+bride_name: Rubaba
+groom_name: Nahid
+email: adrito642@gmail.com
+phone: 01950463204
+address: 
+created_by_name: Admintest
+===== BOOKING DATA END =====
+Client found: Rubaba & Nahid
+Addons found: 0, Total: 0.00
+Package from booking - Name: test 2, Price: 15000, Duration: Full Day
+Attempting to fetch package from DB with ID: 2
+Package found in DB
+Features loaded: 1
+Using existing invoice ID: 15, Number: INV2026030015
+Payments found: 1, Total paid: 10000.00
+TOTALS - Package: 15000, Addons: 0.00, Grand: 15000, Due: 5000
+DISPLAY VALUES - Name: test 2, Price: 15000, Duration: 5 Hours, Desc: 50 editted image will be provided , Unlimited shoots, All photos will deliver via drive
+PDF generated successfully
+Invoice saved: uploads/invoices/Invoice_INV2026030015_20260310.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-03-10 19:01:48] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 16 =====
+Fetching booking details...
+===== BOOKING DATA START =====
+id: 16
+booking_number: BK2026030016
+client_id: 16
+package_id: 2
+package_name: test 2
+package_price: 15000.00
+event_type: Engagement
+event_date: 2026-03-10
+event_time: 00:01:00
+venue_name: Grand Taj
+venue_address: 153/B Malibagh Chowdhury Para Rd
+special_notes: Night shoot
+status: pending
+booking_date: 2026-03-11 00:01:48
+created_by: 1
+created_at: 2026-03-11 00:01:48
+updated_at: 2026-03-11 00:01:48
+bride_name: Rubaba
+groom_name: Nahid
+email: adrito642@gmail.com
+phone: 01950463204
+address: 153/B Malibagh Chowdhury Para Rd
+created_by_name: Admintest
+===== BOOKING DATA END =====
+Client found: Rubaba & Nahid
+Addons found: 0, Total: 0.00
+Package from booking - Name: test 2, Price: 15000, Duration: Full Day
+Attempting to fetch package from DB with ID: 2
+Package found in DB
+Features loaded: 1
+Using existing invoice ID: 16, Number: INV2026030016
+Payments found: 1, Total paid: 5000.00
+TOTALS - Package: 15000, Addons: 0.00, Grand: 15000, Due: 10000
+DISPLAY VALUES - Name: test 2, Price: 15000, Duration: 5 Hours, Desc: 50 editted image will be provided , Unlimited shoots, All photos will deliver via drive
+PDF generated successfully
+Invoice saved: uploads/invoices/Invoice_INV2026030016_20260310.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-03-10 19:15:05] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 17 =====
+Fetching booking details...
+===== BOOKING DATA START =====
+id: 17
+booking_number: BK2026030017
+client_id: 17
+package_id: 2
+package_name: test 2
+package_price: 15000.00
+event_type: Wedding
+event_date: 2026-03-10
+event_time: 00:14:00
+venue_name: Grand Taj
+venue_address: 
+special_notes: 
+status: pending
+booking_date: 2026-03-11 00:15:05
+created_by: 1
+created_at: 2026-03-11 00:15:05
+updated_at: 2026-03-11 00:15:05
+bride_name: Rubaba
+groom_name: Nahid
+email: adrito642@gmail.com
+phone: 01950463204
+address: 
+created_by_name: Admintest
+===== BOOKING DATA END =====
+Client found: Rubaba & Nahid
+Addons found: 0, Total: 0.00
+Package from booking - Name: test 2, Price: 15000, Duration: Full Day
+Attempting to fetch package from DB with ID: 2
+Package found in DB
+Features loaded: 1
+Using existing invoice ID: 17, Number: INV2026030017
+Payments found: 1, Total paid: 10000.00
+TOTALS - Package: 15000, Addons: 0.00, Grand: 15000, Due: 5000
+DISPLAY VALUES - Name: test 2, Price: 15000, Duration: 5 Hours, Desc: 50 editted image will be provided , Unlimited shoots, All photos will deliver via drive
+PDF generated successfully
+Invoice saved: uploads/invoices/Invoice_INV2026030017_20260310.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-03-10 19:25:14] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 18 =====
+Fetching booking details...
+BOOKING DATA:
+Array
+(
+    [id] => 18
+    [booking_number] => BK2026030018
+    [client_id] => 18
+    [package_id] => 2
+    [package_name] => test 2
+    [package_price] => 15000.00
+    [event_type] => Wedding
+    [event_date] => 2026-03-10
+    [event_time] => 00:24:00
+    [venue_name] => Grand Taj
+    [venue_address] => 
+    [special_notes] => n0
+    [status] => pending
+    [booking_date] => 2026-03-11 00:25:14
+    [created_by] => 1
+    [created_at] => 2026-03-11 00:25:14
+    [updated_at] => 2026-03-11 00:25:14
+    [bride_name] => Rubaba
+    [groom_name] => Nahid
+    [email] => adrito642@gmail.com
+    [phone] => 01950463204
+    [address] => 
+    [created_by_name] => Admintest
+)
+
+CLIENT FOUND: Rubaba & Nahid
+ADDONS FOUND: 0 items, TOTAL: 0.00
+Using package_name from booking: test 2
+Using package_price from booking: 15000
+Fetching package from database with ID: 2
+Package found: test 2
+Using feature as description: 50 editted image will be provided , Unlimited shoots, All photos will deliver via drive
+FINAL PACKAGE VALUES:
+Name: test 2
+Price: 15000
+Duration: 5 Hours
+Description: 50 editted image will be provided , Unlimited shoots, All photos will deliver via drive
+Using existing invoice ID: 18
+Payments found: 1, Total paid: 10000.00
+TOTALS: Package: 15000, Addons: 0.00, Grand: 15000, Due: 5000
+RENDERING PACKAGE ROW WITH: Name='test 2', Desc='50 editted image will be provided , Unlimited shoots, All photos will deliver via drive', Dur='5 Hours', Price='15,000.00'
+PDF generated successfully
+Invoice saved: uploads/invoices/Invoice_INV2026030018_20260310.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-03-10 19:38:48] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 19 =====
+Fetching booking details...
+===== BOOKING DATA START =====
+id: 19
+booking_number: BK2026030019
+client_id: 19
+package_id: 2
+package_name: test 2
+package_price: 15000.00
+event_type: Wedding
+event_date: 2026-03-10
+event_time: 00:38:00
+venue_name: Grand Taj
+venue_address: 
+special_notes: A
+status: pending
+booking_date: 2026-03-11 00:38:48
+created_by: 1
+created_at: 2026-03-11 00:38:48
+updated_at: 2026-03-11 00:38:48
+bride_name: Rubaba
+groom_name: Nahid
+email: adrito642@gmail.com
+phone: 01950463204
+address: 
+created_by_name: Admintest
+===== BOOKING DATA END =====
+Client found: Rubaba & Nahid
+Addons found: 0, Total: 0.00
+Package from booking - Name: test 2, Price: 15000, Duration: Full Day
+Attempting to fetch package from DB with ID: 2
+Package found in DB
+Features loaded: 1
+Using existing invoice ID: 19, Number: INV2026030019
+Payments found: 1, Total paid: 500.00
+TOTALS - Package: 15000, Addons: 0.00, Grand: 15000, Due: 14500
+DISPLAY VALUES - Name: test 2, Price: 15000, Duration: 5 Hours, Desc: 50 editted image will be provided , Unlimited shoots, All photos will deliver via drive
+PDF generated successfully
+Invoice saved: uploads/invoices/Invoice_INV2026030019_20260310.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-03-10 19:52:24] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 20 =====
+Fetching booking details...
+PACKAGE DATA - Name: test 2, Price: 15000, Duration: 5 Hours
+
+[2026-03-10 20:01:37] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 21 =====
+Fetching booking details...
+PACKAGE DATA FROM BOOKING: Name=test 2, Price=15000, Duration=Full Day
+FINAL PACKAGE DATA: Name=test 2, Price=15000, Duration=5 Hours
+DISPLAYING: Name='test 2', Desc='50 editted image will be provided , Unlimi...', Dur='5 Hours', Price=15000
+Package details row added to PDF
+PDF generated successfully
+Invoice saved: uploads/invoices/Invoice_INV2026030021_20260310.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-03-10 20:25:59] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 21 =====
+Fetching booking details...
+PACKAGE DATA FROM BOOKING: Name=test 2, Price=15000, Duration=Full Day
+FINAL PACKAGE DATA: Name=test 2, Price=15000, Duration=5 Hours
+DISPLAYING: Name='test 2', Desc='50 editted image will be provided , Unlimi...', Dur='5 Hours', Price=15000
+Package details row added to PDF
+PDF generated successfully
+Invoice saved: uploads/invoices/Invoice_INV2026030021_20260310.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-03-10 20:59:11] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 22 =====
+Fetching booking details...
+PACKAGE DATA FROM BOOKING: Name=test 1, Price=12500, Duration=Full Day
+FINAL PACKAGE DATA: Name=test 1, Price=12500, Duration=5 Hours
+DISPLAYING: Name='test 1', Desc='50 Editted Images, Unlimited Shoots, All I...', Dur='5 Hours', Price=12500
+Package details row added to PDF
+PDF generated successfully
+Invoice saved: uploads/invoices/Invoice_INV2026030022_20260310.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-03-10 21:00:44] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 22 =====
+Fetching booking details...
+PACKAGE DATA FROM BOOKING: Name=test 1, Price=12500, Duration=Full Day
+FINAL PACKAGE DATA: Name=test 1, Price=12500, Duration=5 Hours
+DISPLAYING: Name='test 1', Desc='50 Editted Images, Unlimited Shoots, All I...', Dur='5 Hours', Price=12500
+Package details row added to PDF
+PDF generated successfully
+Invoice saved: uploads/invoices/Invoice_INV2026030022_20260310.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-03-11 15:10:45] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 23 =====
+Fetching booking details...
+PACKAGE DATA FROM BOOKING: Name=test 2, Price=15000, Duration=Full Day
+FINAL PACKAGE DATA: Name=test 2, Price=15000, Duration=5 Hours
+DISPLAYING: Name='test 2', Desc='50 editted image will be provided , Unlimi...', Dur='5 Hours', Price=15000
+Package details row added to PDF
+PDF generated successfully
+Invoice saved: uploads/invoices/Invoice_INV2026030023_20260311.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-03-11 15:28:02] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 24 =====
+Fetching booking details...
+PACKAGE DATA FROM BOOKING: Name=test 2, Price=15000, Duration=Full Day
+FINAL PACKAGE DATA: Name=test 2, Price=15000, Duration=5 Hours
+DISPLAYING: Name='test 2', Desc='50 editted image will be provided , Unlimi...', Dur='5 Hours', Price=15000
+Package details row added to PDF
+PDF generated successfully
+Invoice saved: uploads/invoices/Invoice_INV2026030024_20260311.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-03-11 15:29:47] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 25 =====
+Fetching booking details...
+PACKAGE DATA FROM BOOKING: Name=test 2, Price=15000, Duration=Full Day
+FINAL PACKAGE DATA: Name=test 2, Price=15000, Duration=5 Hours
+DISPLAYING: Name='test 2', Desc='50 editted image will be provided , Unlimi...', Dur='5 Hours', Price=15000
+Package details row added to PDF
+PDF generated successfully
+Invoice saved: uploads/invoices/Invoice_INV2026030025_20260311.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-03-31 16:44:13] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 1 =====
+Fetching booking details...
+PACKAGE DATA FROM BOOKING: Name=test 2, Price=15000, Duration=Full Day
+FINAL PACKAGE DATA: Name=test 2, Price=15000, Duration=5 Hours
+DISPLAYING: Name='test 2', Desc='50 editted image will be provided , Unlimi...', Dur='5 Hours', Price=15000
+Package details row added to PDF
+PDF generated successfully
+Invoice saved: uploads/invoices/Invoice_INV2026030001_20260331.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-03-31 21:59:33] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 33 =====
+Fetching booking details...
+
+[2026-04-01 20:12:29] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 37 =====
+Fetching booking details...
+Invoice saved: uploads/invoices/Invoice_INV2026030008_20260401.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-04-01 20:31:16] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 38 =====
+Fetching booking details...
+Invoice saved: uploads/invoices/Invoice_INV2026030009_20260401.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-04-01 20:42:22] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 39 =====
+Fetching booking details...
+Invoice saved: uploads/invoices/Invoice_INV2026030010_20260401.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-04-01 20:43:04] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 40 =====
+Fetching booking details...
+Invoice saved: uploads/invoices/Invoice_INV2026030011_20260401.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-04-03 17:07:07] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 43 =====
+Fetching booking details...
+Invoice saved: uploads/invoices/Invoice_INV2026030014_20260403.pdf
+===== INVOICE GENERATION COMPLETED =====
+
+[2026-04-03 21:53:33] ===== STARTING INVOICE GENERATION FOR BOOKING ID: 56 =====
+Fetching booking details...
+Invoice saved: uploads/invoices/Invoice_INV2026030016_20260403.pdf
+===== INVOICE GENERATION COMPLETED =====

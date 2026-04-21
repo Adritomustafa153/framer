@@ -46,6 +46,7 @@ $packages = $package->getAll('sort_order ASC, created_at DESC');
                     <tr>
                         <th>ID</th>
                         <th>Package Name</th>
+                        <th>Category</th> <!-- Add this -->
                         <th>Code</th>
                         <th>Price</th>
                         <th>Duration</th>
@@ -61,6 +62,7 @@ $packages = $package->getAll('sort_order ASC, created_at DESC');
                             <tr>
                                 <td><?php echo $row['id']; ?></td>
                                 <td><?php echo htmlspecialchars($row['package_name']); ?></td>
+                                <td><?php echo htmlspecialchars($row['category'] ?? 'Other'); ?></td>
                                 <td><?php echo htmlspecialchars($row['package_code']); ?></td>
                                 <td><?php echo $row['currency']; ?> <?php echo number_format($row['price'], 2); ?></td>
                                 <td><?php echo htmlspecialchars($row['duration']); ?></td>

@@ -1,0 +1,60 @@
+<?php
+// admin/invoice-preview.php
+require_once '../config/database.php';
+require_once '../models/Booking.php';
+require_once '../models/Invoice.php';
+require_once '../includes/invoice_generator.php';
+
+// Check if user is logged in
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$database = new Database();
+$db = $database->getConnection();
+
+$booking_id = $_GET['booking_id'] ?? 0;
+
+$bookingModel = new Booking($db);
+$invoiceModel = new Invoice($db);
+
+$booking = $bookingModel->getWithDetails($booking_id);
+if (!$booking) {
+    die("Booking not found");
+}
+
+// Check if invoice already exists
+$invoice = $invoiceModel->getByBooking($booking_id);
+
+if (!$invoice) {
+    // Create new invoice
+    $invoice_data = [
+        'booking_id' => $booking_id,
+        'total_amount' => $booking['package_price'],
+        'paid_amount' => 0,
+        'due_amount' => $booking['package_price'],
+        'invoice_date' => date('Y-m-d'),
+        'due_date' => null,
+        'status' => 'unpaid'
+    ];
+    
+    $invoice_result = $invoiceModel->create($invoice_data);
+    $invoice_id = $invoice_result['id'];
+} else {
+    $invoice_id = $invoice['id'];
+}
+
+// Generate invoice
+$invoiceGen = new InvoiceGenerator($db);
+$result = $invoiceGen->generateInvoice($booking_id, $invoice_id);
+
+if ($result['success']) {
+    // Redirect to the generated PDF
+    header("Location: ../" . $result['pdf_path']);
+    exit();
+} else {
+    die("Error generating invoice: " . $result['message']);
+}
+?>

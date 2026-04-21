@@ -104,6 +104,20 @@ require_once 'header.php';
                     <input type="text" name="package_name" id="package_name" class="form-control" required 
                            value="<?php echo htmlspecialchars($packageData['package_name'] ?? ''); ?>">
                 </div>
+
+                <!-- Add this after the package_name field -->
+<div class="col-md-6 mb-3">
+    <label class="form-label">Category</label>
+    <select name="category" class="form-control">
+        <option value="Wedding" <?php echo ($packageData['category'] ?? '') == 'Wedding' ? 'selected' : ''; ?>>Wedding</option>
+        <option value="Portrait" <?php echo ($packageData['category'] ?? '') == 'Portrait' ? 'selected' : ''; ?>>Portrait</option>
+        <option value="Other" <?php echo ($packageData['category'] ?? '') == 'Other' ? 'selected' : ''; ?>>Outdoor</option>
+        <option value="Event" <?php echo ($packageData['category'] ?? '') == 'Event' ? 'selected' : ''; ?>>Combo</option>
+        <option value="Commercial" <?php echo ($packageData['category'] ?? '') == 'Commercial' ? 'selected' : ''; ?>>Commercial</option>
+        
+        <option value="Other" <?php echo ($packageData['category'] ?? '') == 'Other' ? 'selected' : ''; ?>>Other</option>
+    </select>
+</div>
                 
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Package Code *</label>

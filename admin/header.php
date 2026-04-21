@@ -124,14 +124,20 @@ $unreadCount = $message->getUnreadCount();
                         <i class="bi bi-box"></i> Packages
                     </a>
                     <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'why-us') !== false ? 'active' : ''; ?>" href="why-us.php">
-    <i class="bi bi-question-circle"></i> Why Us
-</a>
-<a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'faq') !== false ? 'active' : ''; ?>" href="faq.php">
-    <i class="bi bi-chat-dots"></i> FAQs
-</a>
+                        <i class="bi bi-question-circle"></i> Why Us
+                    </a>
                     <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'blog') !== false ? 'active' : ''; ?>" href="blog.php">
                         <i class="bi bi-pencil-square"></i> Blog Posts
                     </a>
+                    <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'faq') !== false ? 'active' : ''; ?>" href="faq.php">
+                        <i class="bi bi-chat-dots"></i> FAQs
+                    </a>
+                    <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'addon') !== false ? 'active' : ''; ?>" href="addons.php">
+    <i class="bi bi-plus-square"></i> Add-on Services
+</a>
+<a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'projects') !== false ? 'active' : ''; ?>" href="projects.php">
+    <i class="bi bi-folder2-open"></i> Projects
+</a>
                     
                     <div class="nav-group-title">MEDIA</div>
                     
@@ -141,8 +147,16 @@ $unreadCount = $message->getUnreadCount();
                     <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'gallery') !== false && strpos($_SERVER['PHP_SELF'], 'gallery-settings') === false ? 'active' : ''; ?>" href="gallery.php">
                         <i class="bi bi-collection"></i> Gallery
                     </a>
+                    <li class="nav-item">
+    <a class="nav-link" href="client-galleries.php">
+        <i class="bi bi-folder-symlink"></i> Client Galleries
+    </a>
+</li>
                     <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'gallery-settings') !== false ? 'active' : ''; ?>" href="gallery-settings.php">
                         <i class="bi bi-gear"></i> Gallery Settings
+                    </a>
+                    <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'photographer') !== false ? 'active' : ''; ?>" href="photographers.php">
+                        <i class="bi bi-camera"></i> Photographers
                     </a>
                     
                     <div class="nav-group-title">COMMUNICATION</div>
@@ -157,14 +171,29 @@ $unreadCount = $message->getUnreadCount();
                     <div class="nav-group-title">SYSTEM</div>
                     
                     <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'users') !== false ? 'active' : ''; ?>" href="users.php">
-                        <i class="bi bi-people"></i> Users
-                    </a>
+    <i class="bi bi-people"></i> Users
+</a>
                     <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'settings') !== false ? 'active' : ''; ?>" href="settings.php">
                         <i class="bi bi-gear"></i> Settings
                     </a>
                     <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'activity') !== false ? 'active' : ''; ?>" href="activity.php">
-                        <i class="bi bi-clock-history"></i> Activity Log
-                    </a>
+    <i class="bi bi-clock-history"></i> Activity Log
+</a>
+
+                    <div class="nav-group-title">CRM</div>
+
+<a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'bookings') !== false ? 'active' : ''; ?>" href="bookings.php">
+    <i class="bi bi-calendar-check"></i> Bookings
+</a>
+<a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'clients') !== false ? 'active' : ''; ?>" href="clients.php">
+    <i class="bi bi-people"></i> Clients
+</a>
+<a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'payments') !== false ? 'active' : ''; ?>" href="payments.php">
+    <i class="bi bi-cash-stack"></i> Payments
+</a>
+<a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'invoices') !== false ? 'active' : ''; ?>" href="invoices.php">
+    <i class="bi bi-receipt"></i> Invoices
+</a>
                 </div>
             </div>
             <div class="col-md-10 main-content">

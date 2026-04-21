@@ -3,7 +3,8 @@
 require_once '../config/database.php';
 require_once '../models/Package.php';
 require_once '../models/Blog.php';
-require_once '../models/Gallery.php';
+require_once '../models/Gallery.php';          // public website gallery (existing)
+require_once '../models/ClientGallery.php';    // NEW: client online galleries
 require_once '../models/Message.php';
 require_once '../models/User.php';
 require_once '../models/Slider.php';
@@ -16,6 +17,7 @@ $db = $database->getConnection();
 $package = new Package($db);
 $blog = new Blog($db);
 $gallery = new Gallery($db);
+$clientGallery = new ClientGallery($db);       // NEW
 $message = new Message($db);
 $user = new User($db);
 $slider = new Slider($db);
@@ -23,6 +25,7 @@ $slider = new Slider($db);
 $packageCount = $package->count();
 $blogCount = $blog->count();
 $galleryCount = $gallery->count();
+$clientGalleryCount = $clientGallery->count(); // NEW
 $messageCount = $message->count();
 $unreadCount = $message->getUnreadCount();
 $userCount = $user->count();
@@ -40,6 +43,9 @@ $recentPosts = $blog->getAll('created_at DESC LIMIT 5');
 
 // Get recent slider images
 $recentSlides = $slider->getAll('created_at DESC LIMIT 4');
+
+// NEW: Get recent client galleries
+$recentClientGalleries = $clientGallery->getAll('created_at DESC LIMIT 4');
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -49,7 +55,7 @@ $recentSlides = $slider->getAll('created_at DESC LIMIT 4');
     </div>
 </div>
 
-<!-- Stats Cards -->
+<!-- Stats Cards - First Row -->
 <div class="row mb-4">
     <div class="col-md-3 mb-3">
         <div class="card stat-card bg-primary text-white">
@@ -118,24 +124,40 @@ $recentSlides = $slider->getAll('created_at DESC LIMIT 4');
     </div>
 </div>
 
-<!-- Second Row Stats -->
+<!-- Stats Cards - Second Row -->
 <div class="row mb-4">
-    <div class="col-md-4 mb-3">
+    <div class="col-md-3 mb-3">
         <div class="card stat-card bg-secondary text-white">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="card-title">Gallery Images</h6>
+                        <h6 class="card-title">Public Gallery</h6>
                         <h2 class="mb-0"><?php echo $galleryCount; ?></h2>
                     </div>
                     <i class="bi bi-collection fs-1"></i>
                 </div>
-                <a href="gallery.php" class="text-white text-decoration-none small">Manage Gallery →</a>
+                <a href="gallery.php" class="text-white text-decoration-none small">Manage →</a>
             </div>
         </div>
     </div>
     
-    <div class="col-md-4 mb-3">
+    <!-- NEW: Client Galleries Card -->
+    <div class="col-md-3 mb-3">
+        <div class="card stat-card" style="background: #17a2b8; color: white;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Client Galleries</h6>
+                        <h2 class="mb-0"><?php echo $clientGalleryCount; ?></h2>
+                    </div>
+                    <i class="bi bi-folder-symlink fs-1"></i>
+                </div>
+                <a href="client-galleries.php" class="text-white text-decoration-none small">Manage →</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
         <div class="card stat-card bg-dark text-white">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
@@ -150,13 +172,13 @@ $recentSlides = $slider->getAll('created_at DESC LIMIT 4');
         </div>
     </div>
     
-    <div class="col-md-4 mb-3">
+    <div class="col-md-3 mb-3">
         <div class="card stat-card" style="background: #6f42c1; color: white;">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="card-title">Total Content</h6>
-                        <h2 class="mb-0"><?php echo $packageCount + $blogCount + $sliderCount + $galleryCount; ?></h2>
+                        <h2 class="mb-0"><?php echo $packageCount + $blogCount + $sliderCount + $galleryCount + $clientGalleryCount; ?></h2>
                     </div>
                     <i class="bi bi-files fs-1"></i>
                 </div>
@@ -239,7 +261,7 @@ $recentSlides = $slider->getAll('created_at DESC LIMIT 4');
     </div>
 </div>
 
-<!-- Recent Slider Images - FIXED VERSION -->
+<!-- Recent Slider Images (existing) -->
 <div class="row">
     <div class="col-12 mb-4">
         <div class="card">
@@ -251,9 +273,7 @@ $recentSlides = $slider->getAll('created_at DESC LIMIT 4');
                 <?php if ($recentSlides && $recentSlides->rowCount() > 0): ?>
                     <div class="row">
                         <?php while ($slide = $recentSlides->fetch()): 
-                            // Fix image path for display
                             $imageUrl = $slide['image_url'];
-                            // If it's a local upload, add ../ to path
                             if (strpos($imageUrl, 'uploads/') === 0) {
                                 $imageUrl = '../' . $imageUrl;
                             }
@@ -290,6 +310,54 @@ $recentSlides = $slider->getAll('created_at DESC LIMIT 4');
     </div>
 </div>
 
+<!-- NEW: Recent Client Galleries -->
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-folder-symlink me-2"></i>Recent Client Galleries</h5>
+                <a href="client-galleries.php" class="btn btn-sm btn-light">Manage All</a>
+            </div>
+            <div class="card-body">
+                <?php if ($recentClientGalleries && count($recentClientGalleries) > 0): ?>
+                    <div class="row">
+                        <?php foreach ($recentClientGalleries as $g): ?>
+                            <div class="col-md-3 col-sm-6 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-folder2-open fs-1 text-primary"></i>
+                                        <h6 class="mt-2 mb-1"><?php echo htmlspecialchars($g['title']); ?></h6>
+                                        <p class="small text-muted mb-1">
+                                            Code: <?php echo htmlspecialchars($g['gallery_code']); ?>
+                                        </p>
+                                        <div class="mb-2">
+                                            <?php if ($g['is_active']): ?>
+                                                <span class="badge bg-success">Active</span>
+                                            <?php else: ?>
+                                                <span class="badge bg-secondary">Inactive</span>
+                                            <?php endif; ?>
+                                            <?php if ($g['password']): ?>
+                                                <span class="badge bg-warning">Password Protected</span>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="client-gallery-edit.php?id=<?= $g['id'] ?>" class="btn btn-outline-primary">Edit</a>
+                                            <a href="client-gallery-upload.php?id=<?= $g['id'] ?>" class="btn btn-outline-success">Upload</a>
+                                            <a href="../client-gallery.php?code=<?= $g['gallery_code'] ?>" target="_blank" class="btn btn-outline-info">View</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <p class="text-muted mb-0">No client galleries yet. <a href="client-gallery-create.php">Create your first gallery</a></p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Quick Actions -->
 <div class="row">
     <div class="col-12">
@@ -316,11 +384,16 @@ $recentSlides = $slider->getAll('created_at DESC LIMIT 4');
                     </div>
                     <div class="col-md-3 col-sm-6 mb-2">
                         <a href="gallery-upload.php" class="btn btn-outline-dark w-100">
-                            <i class="bi bi-plus-circle"></i> Upload to Gallery
+                            <i class="bi bi-plus-circle"></i> Upload to Public Gallery
                         </a>
                     </div>
                 </div>
                 <div class="row mt-2">
+                    <div class="col-md-3 col-sm-6 mb-2">
+                        <a href="client-gallery-create.php" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-folder-plus"></i> New Client Gallery
+                        </a>
+                    </div>
                     <div class="col-md-3 col-sm-6 mb-2">
                         <a href="messages.php" class="btn btn-outline-warning w-100">
                             <i class="bi bi-envelope"></i> Check Messages
@@ -345,7 +418,7 @@ $recentSlides = $slider->getAll('created_at DESC LIMIT 4');
     </div>
 </div>
 
-<!-- System Info -->
+<!-- System Info (unchanged) -->
 <div class="row mt-4">
     <div class="col-12">
         <div class="card">
